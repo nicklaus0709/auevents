@@ -38,12 +38,13 @@ export default function PublicNavbar() {
     <header className="sticky top-0 z-40 bg-deep text-white shadow-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-3">
-          {evento?.logo_url && (
+          {evento?.logo_url ? (
             <img src={evento.logo_url} alt={evento.nombre} className="h-11 w-auto rounded-xl bg-white px-2 py-0.5 shadow-md" />
+          ) : (
+            <span className="font-titulo text-xl font-bold leading-none tracking-tight sm:text-2xl">
+              {evento?.nombre || "Capioví Eventos"}
+            </span>
           )}
-          <span className={`font-titulo text-xl font-bold leading-none tracking-tight sm:text-2xl ${evento?.logo_url ? "hidden md:inline" : ""}`}>
-            {evento?.nombre || "Capioví Eventos"}
-          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Principal">

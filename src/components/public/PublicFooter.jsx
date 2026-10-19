@@ -17,10 +17,9 @@ export default function PublicFooter() {
       <div className="stripe-candy" aria-hidden="true" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
-          <div className="mb-4 flex items-center gap-3">
-            <img src="/navidad/escudo.png" alt="Escudo de Capioví" className="h-16 w-auto drop-shadow-lg" />
-            {evento?.logo_url && <img src={evento.logo_url} alt="" className="h-14 w-auto rounded-xl bg-white px-2 py-0.5" />}
-          </div>
+          {evento?.logo_url && (
+            <img src={evento.logo_url} alt={evento?.nombre} className="mb-4 h-16 w-auto rounded-xl bg-white px-2 py-0.5" />
+          )}
           <p className="font-titulo text-2xl font-bold text-white">{evento?.nombre || "Municipalidad de Capioví"}</p>
           <p className="mt-3 text-sm leading-relaxed">{txt(evento, "footer_texto")}</p>
           {social.length > 0 && (

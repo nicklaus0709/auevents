@@ -70,11 +70,6 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 to-transparent" />
         <div className="mx-auto w-full max-w-6xl px-4 pb-28 pt-24 sm:px-6 sm:pb-32">
-          {evento.logo_url && (
-            <div className="animate-fade-up mb-6 inline-block rounded-2xl bg-white p-2 shadow-2xl">
-              <img src={evento.logo_url} alt={evento.nombre} className="h-20 w-auto sm:h-24" />
-            </div>
-          )}
           <p className="animate-fade-up mb-3 text-xs font-bold uppercase tracking-[0.3em] text-white/80">{txt(evento, "hero_eyebrow")}</p>
           <h1 className="animate-fade-up max-w-3xl text-balance font-titulo text-5xl !text-white sm:text-7xl">{evento.nombre}</h1>
           {evento.descripcion && <p className="animate-fade-up mt-5 max-w-2xl text-lg text-white/90 sm:text-xl">{evento.descripcion}</p>}
@@ -169,10 +164,11 @@ export default function Home() {
             {historia.intro.map((t, i) => <p key={i} className="mt-5 max-w-3xl leading-relaxed text-white/85">{t}</p>)}
             {historia.items.length > 0 && (
               <div className="historia-scroll mt-10 max-h-[26rem] overflow-y-auto pr-5 sm:pr-8">
-                <ol className="relative space-y-8 border-l-2 border-white/25 pl-8 sm:ml-4">
+                <ol className="relative space-y-8">
+                  <span aria-hidden="true" className="absolute bottom-0 left-[0.45rem] top-0 w-[3px] rounded-full bg-white/20" />
                   {historia.items.map((it) => (
-                    <li key={it.title} className="relative">
-                      <span className="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand ring-4 ring-white/20" />
+                    <li key={it.title} className="relative pl-7">
+                      <span className="absolute left-0 top-1 h-4 w-4 rounded-full bg-brand ring-4 ring-white/20" />
                       <h3 className="font-titulo text-2xl !text-white">{it.title}</h3>
                       <div className="mt-2 max-w-3xl space-y-3 leading-relaxed text-white/80">{paragraphs(it.body).map((t, i) => <p key={i}>{t}</p>)}</div>
                     </li>
