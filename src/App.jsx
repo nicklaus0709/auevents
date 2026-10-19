@@ -14,6 +14,7 @@ import Eventos from '@/pages/public/Eventos';
 import Gastronomia from '@/pages/public/Gastronomia';
 import Contacto from '@/pages/public/Contacto';
 import Bonos from '@/pages/public/Bonos';
+import DescargaPdf from '@/pages/public/DescargaPdf';
 import Admin from '@/pages/admin/Admin';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -60,6 +61,8 @@ const AuthenticatedApp = () => {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/bonos" element={<Bonos />} />
       </Route>
+
+      <Route path="/pdf/:tipo" element={<EventoProvider><DescargaPdf /></EventoProvider>} />
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/admin" element={<EventoProvider><Admin /></EventoProvider>} />
