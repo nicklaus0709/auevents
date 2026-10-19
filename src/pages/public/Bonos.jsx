@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Heart, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { formatMoney } from "@/lib/formato";
 import { toast } from "@/components/ui/use-toast";
+import PageHero from "@/components/public/PageHero";
+import Spinner from "@/components/public/Spinner";
 
 const MONTOS = [2000, 5000, 10000, 20000];
 
@@ -45,105 +45,91 @@ export default function Bonos() {
     }
   };
 
-  if (loading) {
-    return <div className="min-h-[50vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-border border-t-foreground rounded-full animate-spin" /></div>;
-  }
+  if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 md:py-20">
-      <header className="mb-10 text-center">
-        <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-secondary mb-4">
-          <Heart className="h-7 w-7" style={{ color: evento?.color_acento || "hsl(var(--accent))" }} />
-        </div>
-        <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">{evento?.nombre}</span>
-        <h1 className="font-heading font-bold text-4xl md:text-5xl mt-2">Bonos de Colaboración</h1>
-        <p className="text-muted-foreground mt-3 text-lg max-w-xl mx-auto">
-          Apoyá el evento de la comunidad de Capioví con tu colaboración. Todos los bonos ayudan a sostener la fiesta.
-        </p>
-      </header>
-
-      {solicitud ? (
-        <div className="bg-card border border-border rounded-xl p-8 text-center">
-          <CheckCircle2 className="h-12 w-12 mx-auto mb-4" style={{ color: evento?.color_acento || "hsl(var(--accent))" }} />
-          <h2 className="font-heading font-semibold text-2xl mb-2">¡Solicitud registrada!</h2>
-          <p className="text-muted-foreground mb-1">Tu código de seguimiento es:</p>
-          <p className="font-mono font-bold text-xl mb-6 tracking-wider">{solicitud.codigo}</p>
-          <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
-            Para confirmar tu bono, realizá el pago de <strong>${solicitud.monto.toLocaleString("es-AR")}</strong> a través de Mercado Pago y luego enviá el comprobante por WhatsApp con tu código.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            {evento?.mp_link && (
-              <a href={evento.mp_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-accent text-accent-foreground font-semibold rounded-md hover:opacity-90 transition-opacity">
-                Pagar en Mercado Pago <ArrowUpRight className="h-4 w-4" />
-              </a>
-            )}
-            {evento?.whatsapp_url && (
-              <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-border font-semibold rounded-md hover:bg-secondary transition-colors">
-                Enviar comprobante por WhatsApp
-              </a>
-            )}
-          </div>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-6 bg-card border border-border rounded-xl p-6 md:p-8">
-          <div>
-            <Label>Elegí el monto de tu colaboración</Label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
-              {MONTOS.map((m) => (
-                <button
-                  type="button"
-                  key={m}
-                  onClick={() => { setForm({ ...form, monto: m }); setCustom(""); }}
-                  className={`px-3 py-4 rounded-lg border-2 font-heading font-semibold transition-colors ${
-                    !custom && form.monto === m ? "border-foreground bg-secondary" : "border-border hover:border-foreground/40"
-                  }`}
-                >
-                  ${m.toLocaleString("es-AR")}
-                </button>
-              ))}
-            </div>
-            <div className="mt-3">
-              <Label htmlFor="custom">Otro monto</Label>
-              <Input
-                id="custom"
-                type="number"
-                min="1"
-                placeholder="Ingresá un monto personalizado"
-                value={custom}
-                onChange={(e) => setCustom(e.target.value)}
-                className="mt-1.5"
-              />
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="bnombre">Nombre y apellido *</Label>
-              <Input id="bnombre" required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bemail">Email *</Label>
-              <Input id="bemail" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="btelefono">Teléfono</Label>
-            <Input id="btelefono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
-          </div>
-
-          <div className="pt-2 border-t border-border">
-            <p className="text-sm text-muted-foreground mb-3">
-              Total a colaborar: <strong className="text-foreground text-lg">${montoFinal.toLocaleString("es-AR")}</strong>
+    <>
+      <PageHero
+        eyebrow={evento?.nombre}
+        title="Bonos de colaboración"
+        subtitle="Tu aporte ayuda a que el evento sea posible. Todos los bonos ayudan a sostener la fiesta."
+        image={evento?.hero_image}
+      />
+      <section className="section max-w-3xl">
+        {solicitud ? (
+          <div className="card !p-8 text-center">
+            <h2 className="mb-2 text-2xl">¡Solicitud registrada!</h2>
+            <p className="mb-1 text-stone-600">Tu código de seguimiento es:</p>
+            <p className="mb-6 font-mono text-xl font-bold tracking-wider text-brand">{solicitud.codigo}</p>
+            <p className="mx-auto mb-6 max-w-md text-sm text-stone-600">
+              Para confirmar tu bono, realizá el pago de <strong>{formatMoney(solicitud.monto)}</strong> a través de Mercado Pago y luego enviá el comprobante por WhatsApp con tu código.
             </p>
-            <Button type="submit" disabled={sending} className="w-full">
-              {sending ? "Registrando..." : "Registrar y continuar al pago"}
-            </Button>
-            <p className="text-xs text-muted-foreground mt-3 text-center">
-              Al registrar vas a recibir un código de seguimiento y el link de Mercado Pago para completar el pago.
-            </p>
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              {evento?.mp_link && (
+                <a href={evento.mp_link} target="_blank" rel="noopener noreferrer" className="btn !px-6 !py-3">
+                  Pagar en Mercado Pago <ArrowUpRight className="h-4 w-4" />
+                </a>
+              )}
+              {evento?.whatsapp_url && (
+                <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="btn-secondary !px-6 !py-3">
+                  Enviar comprobante por WhatsApp
+                </a>
+              )}
+            </div>
           </div>
-        </form>
-      )}
-    </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="card space-y-6 !p-6 md:!p-8">
+            <div>
+              <span className="label">Elegí el monto de tu colaboración</span>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {MONTOS.map((m) => (
+                  <button
+                    type="button"
+                    key={m}
+                    onClick={() => { setForm({ ...form, monto: m }); setCustom(""); }}
+                    className={`rounded-xl border-2 px-3 py-4 font-titulo text-lg font-bold transition ${
+                      !custom && form.monto === m ? "border-brand bg-brand/10 text-brand" : "border-stone-200 hover:border-brand/40"
+                    }`}
+                  >
+                    {formatMoney(m)}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4">
+                <label className="label" htmlFor="custom">Otro monto</label>
+                <input id="custom" type="number" min="1" className="input" placeholder="Ingresá un monto personalizado" value={custom} onChange={(e) => setCustom(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="label" htmlFor="bnombre">Nombre y apellido</label>
+                <input id="bnombre" className="input" required autoComplete="name" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+              </div>
+              <div>
+                <label className="label" htmlFor="bemail">Email</label>
+                <input id="bemail" type="email" className="input" required autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <label className="label" htmlFor="btelefono">Teléfono</label>
+              <input id="btelefono" type="tel" className="input" autoComplete="tel" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+            </div>
+
+            <div className="border-t border-stone-100 pt-4">
+              <p className="mb-3 text-sm text-stone-600">
+                Total a colaborar: <strong className="text-2xl font-extrabold text-brand">{formatMoney(montoFinal || 0)}</strong>
+              </p>
+              <button type="submit" disabled={sending} className="btn w-full sm:w-auto">
+                {sending ? "Registrando…" : "Registrar y continuar al pago"}
+              </button>
+              <p className="mt-3 text-xs text-stone-500">
+                Al registrar vas a recibir un código de seguimiento y el link de Mercado Pago para completar el pago.
+              </p>
+            </div>
+          </form>
+        )}
+      </section>
+    </>
   );
 }

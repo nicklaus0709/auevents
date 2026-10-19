@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Clock, MapPin } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
+import { formatDia, partesDia } from "@/lib/formato";
+import PageHero from "@/components/public/PageHero";
+import Spinner from "@/components/public/Spinner";
 
 export default function Eventos() {
   const { evento, loading } = useEvento();
@@ -14,10 +16,7 @@ export default function Eventos() {
       if (!evento) return;
       setLoadingData(true);
       try {
-        const { items } = await base44.entities.Artista.filter(
-          { evento_id: evento.id },
-          { sort: "orden", limit: 100 }
-        );
+        const { items } = await base44.entities.Artista.filter({ evento_id: evento.id }, { sort: "orden", limit: 100 });
         if (mounted) setArtistas(items || []);
       } catch (e) {} finally {
         if (mounted) setLoadingData(false);
@@ -26,72 +25,61 @@ export default function Eventos() {
     return () => { mounted = false; };
   }, [evento?.id]);
 
-  if (loading || loadingData) {
-    return <div className="min-h-[50vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-border border-t-foreground rounded-full animate-spin" /></div>;
-  }
+  if (loading || loadingData) return <Spinner />;
 
   // Agrupar por fecha
   const porFecha = {};
-  (artistas || []).forEach((a) => {
+  artistas.forEach((a) => {
     const key = a.fecha || "Sin fecha";
-    if (!porFecha[key]) porFecha[key] = [];
-    porFecha[key].push(a);
+    (porFecha[key] ||= []).push(a);
   });
   const fechas = Object.keys(porFecha).sort();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-20">
-      <header className="mb-10">
-        <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">{evento?.nombre}</span>
-        <h1 className="font-heading font-bold text-4xl md:text-5xl mt-2">Grilla de Eventos</h1>
-        <p className="text-muted-foreground mt-3 text-lg max-w-2xl">Artistas, horarios y escenarios del evento.</p>
-      </header>
-
-      {fechas.length === 0 ? (
-        <div className="text-center py-20 border border-dashed border-border rounded-xl">
-          <Calendar className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">Aún no hay artistas cargados para este evento.</p>
-        </div>
-      ) : (
-        <div className="space-y-12">
-          {fechas.map((fecha) => (
-            <div key={fecha}>
-              <div className="flex items-center gap-3 mb-5 pb-3 border-b border-border">
-                <Calendar className="h-5 w-5" style={{ color: evento?.color_acento || "hsl(var(--accent))" }} />
-                <h2 className="font-heading font-semibold text-xl md:text-2xl">
-                  {fecha === "Sin fecha" ? "Sin fecha" : new Date(fecha).toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}
+    <>
+      <PageHero eyebrow={evento?.nombre} title="Grilla de Eventos" subtitle="Artistas, horarios y escenarios del evento." image={evento?.hero_image} />
+      <section className="section">
+        {fechas.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-stone-300 py-16 text-center text-stone-500">Aún no hay artistas cargados para este evento.</p>
+        ) : (
+          <div className="space-y-12">
+            {fechas.map((fecha) => (
+              <div key={fecha}>
+                <h2 className="mb-5 border-b border-stone-200 pb-3 text-2xl capitalize">
+                  {fecha === "Sin fecha" ? "Sin fecha" : formatDia(fecha)}
                 </h2>
+                <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {porFecha[fecha].map((a) => {
+                    const p = partesDia(a.fecha);
+                    return (
+                      <li key={a.id} className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200 transition hover:-translate-y-1 hover:shadow-xl">
+                        <div className="relative h-44 bg-deep">
+                          {a.imagen_url && <img src={a.imagen_url} alt={a.nombre} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />}
+                          {p && (
+                            <div className="absolute left-4 top-4 rounded-xl bg-white px-3 py-2 text-center leading-none shadow-lg">
+                              <span className="block text-2xl font-extrabold text-brand">{p.day}</span>
+                              <span className="text-xs font-bold uppercase text-stone-600">{p.month}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-5">
+                          {a.hora_inicio && (
+                            <p className="text-xs font-bold uppercase tracking-wider text-stone-500">{a.hora_inicio}{a.hora_fin ? ` - ${a.hora_fin}` : ""} hs</p>
+                          )}
+                          <h3 className="mt-1 text-lg leading-snug">{a.nombre}</h3>
+                          {a.genero && <p className="mt-1 text-sm text-stone-500">{a.genero}</p>}
+                          {a.escenario && <p className="mt-1 text-sm font-semibold text-brand">{a.escenario}</p>}
+                          {a.descripcion && <p className="mt-3 text-sm leading-relaxed text-stone-600">{a.descripcion}</p>}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {porFecha[fecha].map((a) => (
-                  <article key={a.id} className="bg-card border border-border rounded-lg overflow-hidden group hover:shadow-md transition-shadow">
-                    <div className="aspect-[5/3] overflow-hidden bg-secondary">
-                      {a.imagen_url ? (
-                        <img src={a.imagen_url} alt={a.nombre} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center"><Calendar className="h-8 w-8 text-muted-foreground" /></div>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-heading font-semibold text-lg mb-1">{a.nombre}</h3>
-                      {a.genero && <p className="text-sm text-muted-foreground mb-3">{a.genero}</p>}
-                      <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-foreground/70">
-                        {a.hora_inicio && (
-                          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {a.hora_inicio}{a.hora_fin ? ` - ${a.hora_fin}` : ""}</span>
-                        )}
-                        {a.escenario && (
-                          <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {a.escenario}</span>
-                        )}
-                      </div>
-                      {a.descripcion && <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{a.descripcion}</p>}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }

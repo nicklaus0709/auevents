@@ -1,181 +1,205 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, UtensilsCrossed, Heart, ArrowRight, MessageCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
-import { Image } from "@/components/ui/image";
+import { formatFechaLarga, parseHistory, partesDia } from "@/lib/formato";
+import Gallery from "@/components/public/Gallery";
+import Spinner from "@/components/public/Spinner";
+
+const paragraphs = (text) => (text || "").split(/\n\s*\n/).filter(Boolean);
 
 export default function Home() {
   const { evento, loading } = useEvento();
   const [fotos, setFotos] = useState([]);
   const [artistas, setArtistas] = useState([]);
+  const [hayPuestos, setHayPuestos] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       if (!evento) return;
       try {
-        const [g, a] = await Promise.all([
-          base44.entities.GaleriaFoto.filter({ evento_id: evento.id }, { sort: "orden", limit: 8 }),
-          base44.entities.Artista.filter({ evento_id: evento.id }, { sort: "orden", limit: 3 }),
+        const [g, a, p] = await Promise.all([
+          base44.entities.GaleriaFoto.filter({ evento_id: evento.id }, { sort: "orden", limit: 24 }),
+          base44.entities.Artista.filter({ evento_id: evento.id }, { sort: "orden", limit: 100 }),
+          base44.entities.PuestoGastronomico.filter({ evento_id: evento.id }, { limit: 1 }),
         ]);
         if (!mounted) return;
-        setFotos(g.items || []);
+        setFotos((g.items || []).filter((f) => f.imagen_url));
         setArtistas(a.items || []);
+        setHayPuestos((p.items || []).length > 0);
       } catch (e) {}
     })();
     return () => { mounted = false; };
   }, [evento?.id]);
 
-  if (loading) {
-    return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-border border-t-foreground rounded-full animate-spin" /></div>;
-  }
+  if (loading) return <Spinner />;
   if (!evento) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
-        <h1 className="font-heading text-3xl font-bold mb-3">Próximamente</h1>
-        <p className="text-muted-foreground max-w-md">Aún no hay eventos publicados. Volvé a visitarnos pronto.</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+        <h1 className="mb-3 text-3xl">Próximamente</h1>
+        <p className="max-w-md text-stone-500">Aún no hay eventos publicados. Volvé a visitarnos pronto.</p>
       </div>
     );
   }
 
+  // Próximas actividades: las que todavía no pasaron; si no hay, las primeras de la grilla
+  const hoy = new Date().toISOString().slice(0, 10);
+  const conFecha = artistas.filter((a) => a.fecha).sort((a, b) => (a.fecha + (a.hora_inicio || "")).localeCompare(b.fecha + (b.hora_inicio || "")));
+  const proximas = conFecha.filter((a) => a.fecha >= hoy);
+  const destacados = (proximas.length ? proximas : conFecha).slice(0, 3);
+
+  const fechas = [...new Set(conFecha.map((a) => a.fecha))];
+  const cuando = fechas.length
+    ? fechas.length === 1
+      ? formatFechaLarga(fechas[0])
+      : `${formatFechaLarga(fechas[0])} — ${formatFechaLarga(fechas[fechas.length - 1])}`
+    : null;
+  const escenarios = [...new Set(artistas.map((a) => a.escenario).filter(Boolean))];
+
+  const historia = evento.historia ? parseHistory(evento.historia) : null;
+  const nosotros = paragraphs(evento.nosotros);
+
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative h-[70vh] min-h-[480px] flex items-end overflow-hidden">
-        {evento.hero_image ? (
-          <Image src={evento.hero_image} alt={evento.nombre} className="absolute inset-0 h-full w-full" fittingType="fill" />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-foreground to-secondary" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 md:pb-20 w-full">
-          <span className="inline-block px-3 py-1 mb-4 text-xs uppercase tracking-[0.25em] bg-white/15 backdrop-blur-sm text-white rounded-full border border-white/20">
-            {evento.nombre}
-          </span>
-          <h1 className="font-heading font-bold text-white text-4xl md:text-6xl lg:text-7xl leading-[1.05] text-balance max-w-3xl">
-            Capioví es cultura
-          </h1>
-          {evento.descripcion && (
-            <p className="mt-4 text-white/85 text-lg md:text-xl max-w-xl leading-relaxed">{evento.descripcion}</p>
+    <>
+      {/* HERO */}
+      <section className="relative isolate flex h-[78vh] max-h-[52rem] min-h-[34rem] items-end overflow-hidden bg-deep bg-festive text-white">
+        {evento.hero_image && <img src={evento.hero_image} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 to-transparent" />
+        <div className="mx-auto w-full max-w-6xl px-4 pb-28 pt-24 sm:px-6 sm:pb-32">
+          {evento.logo_url && (
+            <div className="animate-fade-up mb-6 inline-block rounded-2xl bg-white p-2 shadow-2xl">
+              <img src={evento.logo_url} alt={evento.nombre} className="h-20 w-auto sm:h-24" />
+            </div>
           )}
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link to="/eventos" className="inline-flex items-center gap-2 px-5 py-3 bg-accent text-accent-foreground font-semibold rounded-md hover:opacity-90 transition-opacity">
-              Ver grilla de eventos <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link to="/gastronomia" className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-md border border-white/25 hover:bg-white/20 transition-colors">
-              <UtensilsCrossed className="h-4 w-4" /> Gastronomía
-            </Link>
+          <p className="animate-fade-up mb-3 text-xs font-bold uppercase tracking-[0.3em] text-white/80">Capioví · Misiones · Argentina</p>
+          <h1 className="animate-fade-up max-w-3xl text-balance font-titulo text-5xl !text-white sm:text-7xl">{evento.nombre}</h1>
+          {evento.descripcion && <p className="animate-fade-up mt-5 max-w-2xl text-lg text-white/90 sm:text-xl">{evento.descripcion}</p>}
+          <div className="animate-fade-up mt-8 flex flex-wrap gap-3">
+            <Link to="/eventos" className="btn-light">Ver grilla de eventos</Link>
+            <Link to="/gastronomia" className="btn-ghost">Gastronomía</Link>
+            <Link to="/bonos" className="btn !px-6 !py-3">Comprar bono</Link>
           </div>
         </div>
       </section>
 
-      {/* Accesos rápidos */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 -mt-10 relative z-20">
-        <div className="grid sm:grid-cols-3 gap-4">
-          {[
-            { to: "/eventos", icon: Calendar, title: "Grilla de Eventos", desc: "Artistas, horarios y escenarios" },
-            { to: "/gastronomia", icon: UtensilsCrossed, title: "Gastronomía", desc: "Puestos y sus productos" },
-            { to: "/bonos", icon: Heart, title: "Bonos de Colaboración", desc: "Apoyá el evento" },
-          ].map((c) => (
-            <Link key={c.to} to={c.to} className="group bg-card border border-border rounded-lg p-6 hover:border-foreground transition-colors shadow-sm">
-              <c.icon className="h-7 w-7 mb-3" style={{ color: evento.color_acento || "hsl(var(--accent))" }} />
-              <h3 className="font-heading font-semibold text-lg mb-1 flex items-center gap-1">
-                {c.title} <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-              </h3>
-              <p className="text-sm text-muted-foreground">{c.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Nosotros / Historia */}
-      {(evento.nosotros || evento.historia) && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20">
-            <div>
-              <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Nosotros</span>
-              <h2 className="font-heading font-bold text-3xl md:text-4xl mt-2 mb-5">La comunidad de Capioví</h2>
-              <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">{evento.nosotros || ""}</p>
-            </div>
-            <div className="md:border-l md:border-border md:pl-12">
-              <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Historia</span>
-              <h2 className="font-heading font-bold text-3xl md:text-4xl mt-2 mb-5">Nuestra tradición</h2>
-              <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">{evento.historia || ""}</p>
-            </div>
+      {/* BARRA DE INFO */}
+      <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:px-6">
+        <dl className="grid gap-px overflow-hidden rounded-2xl bg-stone-200 shadow-xl sm:grid-cols-3">
+          {cuando && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Cuándo</dt><dd className="mt-1 font-bold text-stone-900">{cuando}</dd></div>}
+          {escenarios.length > 0 && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Dónde</dt><dd className="mt-1 font-bold text-stone-900">{escenarios.join(" · ")}</dd></div>}
+          <div className="bg-white p-5">
+            <dt className="text-xs font-bold uppercase tracking-widest text-brand">Más info</dt>
+            <dd className="mt-1 font-bold text-stone-900"><Link to="/contacto" className="underline">Escribinos</Link></dd>
           </div>
-        </section>
-      )}
+        </dl>
+      </div>
 
-      {/* Artistas destacados */}
-      {artistas.length > 0 && (
-        <section className="bg-secondary/40 border-y border-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Próximas presentaciones</span>
-                <h2 className="font-heading font-bold text-3xl md:text-4xl mt-2">Artistas destacados</h2>
-              </div>
-              <Link to="/eventos" className="hidden sm:inline-flex items-center gap-1 text-sm font-medium hover:text-accent transition-colors">
-                Ver todos <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {artistas.map((a) => (
-                <div key={a.id} className="bg-card rounded-lg overflow-hidden border border-border group">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    {a.imagen_url ? (
-                      <img src={a.imagen_url} alt={a.nombre} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="h-full w-full bg-secondary flex items-center justify-center"><Calendar className="h-8 w-8 text-muted-foreground" /></div>
+      {/* PRÓXIMAS ACTIVIDADES */}
+      {destacados.length > 0 && (
+        <section className="section">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div><p className="eyebrow">Agenda</p><h2 className="text-3xl sm:text-4xl">Próximas actividades</h2></div>
+            <Link to="/eventos" className="text-sm font-bold text-brand hover:underline">Ver toda la grilla →</Link>
+          </div>
+          <ul className="mt-8 grid gap-5 md:grid-cols-3">
+            {destacados.map((a) => {
+              const p = partesDia(a.fecha);
+              return (
+                <li key={a.id} className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200 transition hover:-translate-y-1 hover:shadow-xl">
+                  <div className="relative h-40 bg-deep">
+                    {a.imagen_url && <img src={a.imagen_url} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />}
+                    {p && (
+                      <div className="absolute left-4 top-4 rounded-xl bg-white px-3 py-2 text-center leading-none shadow-lg">
+                        <span className="block text-2xl font-extrabold text-brand">{p.day}</span>
+                        <span className="text-xs font-bold uppercase text-stone-600">{p.month}</span>
+                      </div>
                     )}
                   </div>
                   <div className="p-5">
-                    <h3 className="font-heading font-semibold text-lg">{a.nombre}</h3>
-                    {a.genero && <p className="text-sm text-muted-foreground">{a.genero}</p>}
-                    <p className="text-sm mt-2 text-foreground/70">
-                      {a.fecha && new Date(a.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long" })}
-                      {a.hora_inicio && ` · ${a.hora_inicio}`}
+                    <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                      {p && <span className="capitalize">{p.weekday}</span>}{a.hora_inicio && ` · ${a.hora_inicio} hs`}
                     </p>
+                    <h3 className="mt-1 text-lg leading-snug">{a.nombre}</h3>
+                    {a.genero && <p className="mt-1 text-sm text-stone-500">{a.genero}</p>}
+                    {a.escenario && <p className="mt-1 text-sm text-stone-500">{a.escenario}</p>}
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
 
-      {/* Galería */}
-      {fotos.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
-          <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Galería</span>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl mt-2 mb-8">Momentos del evento</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {fotos.map((f) => (
-              <div key={f.id} className="aspect-square overflow-hidden rounded-lg group">
-                {f.imagen_url && (
-                  <img src={f.imagen_url} alt={f.titulo || ""} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* CTA WhatsApp */}
-      {evento.whatsapp_url && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
-          <div className="bg-foreground text-background rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* NOSOTROS */}
+      {nosotros.length > 0 && (
+        <section id="nosotros" className="bg-white">
+          <div className="section grid items-center gap-10 md:grid-cols-2">
             <div>
-              <h2 className="font-heading font-bold text-2xl md:text-3xl mb-2">¿Querés participar del evento?</h2>
-              <p className="text-background/70">Comunicate con la municipalidad para ser artista o tener tu puesto gastronómico.</p>
+              <p className="eyebrow">Nosotros</p>
+              <h2 className="text-3xl sm:text-4xl">Una celebración de toda la comunidad</h2>
+              <div className="mt-5 space-y-4 leading-relaxed text-stone-700">{nosotros.map((t, i) => <p key={i}>{t}</p>)}</div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {hayPuestos && <Link to="/gastronomia" className="btn">Ver gastronomía</Link>}
+                <Link to="/contacto" className="btn-secondary">Quiero participar</Link>
+              </div>
             </div>
-            <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-accent text-accent-foreground font-semibold rounded-md hover:opacity-90 transition-opacity whitespace-nowrap">
-              <MessageCircle className="h-5 w-5" /> Escribinos por WhatsApp
-            </a>
+            {fotos[0] && (
+              <div className="relative">
+                <img src={fotos[0].imagen_url} alt={fotos[0].titulo || evento.nombre} loading="lazy" className="aspect-[4/3] w-full rounded-3xl object-cover shadow-2xl" />
+                {fotos[1] && <img src={fotos[1].imagen_url} alt="" loading="lazy" className="absolute -bottom-6 -left-4 hidden aspect-square w-40 rounded-2xl border-4 border-white object-cover shadow-xl sm:block" />}
+              </div>
+            )}
           </div>
         </section>
       )}
-    </div>
+
+      {/* HISTORIA */}
+      {historia && (historia.intro.length > 0 || historia.items.length > 0) && (
+        <section id="historia" className="bg-deep bg-festive text-white">
+          <div className="section">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-white/70">Historia</p>
+            <h2 className="text-3xl !text-white sm:text-4xl">Cómo llegamos hasta acá</h2>
+            {historia.intro.map((t, i) => <p key={i} className="mt-5 max-w-3xl leading-relaxed text-white/85">{t}</p>)}
+            {historia.items.length > 0 && (
+              <ol className="relative mt-12 space-y-8 border-l-2 border-white/25 pl-8 sm:ml-4">
+                {historia.items.map((it) => (
+                  <li key={it.title} className="relative">
+                    <span className="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand ring-4 ring-white/20" />
+                    <h3 className="font-titulo text-2xl !text-white">{it.title}</h3>
+                    <div className="mt-2 max-w-3xl space-y-3 leading-relaxed text-white/80">{paragraphs(it.body).map((t, i) => <p key={i}>{t}</p>)}</div>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* GALERÍA */}
+      {fotos.length > 0 && (
+        <section id="galeria" className="section">
+          <p className="eyebrow">Galería</p>
+          <h2 className="mb-8 text-3xl sm:text-4xl">Momentos que se quedan en el corazón</h2>
+          <Gallery images={fotos} alt={`Foto de ${evento.nombre}`} />
+        </section>
+      )}
+
+      {/* CTA BONOS */}
+      <section className="px-4 pb-16 sm:px-6">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand2 p-8 text-white shadow-2xl sm:p-14">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/80">Bonos de colaboración</p>
+          <h2 className="mt-2 max-w-xl text-3xl !text-white sm:text-4xl">Sumate: tu aporte hace posible el evento</h2>
+          <p className="mt-3 max-w-xl text-white/90">Registrá tu bono y colaborá con la comunidad de Capioví.</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link to="/bonos" className="btn-light">Ver bonos</Link>
+            {evento.whatsapp_url && (
+              <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="btn-ghost">Escribinos por WhatsApp</a>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

@@ -41,6 +41,10 @@ module.exports = {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
+  			// Kit de estilo del sitio público: colores por evento (variables CSS "r g b")
+  			brand: 'rgb(var(--brand) / <alpha-value>)',
+  			brand2: 'rgb(var(--brand2) / <alpha-value>)',
+  			cream: '#faf7f2',
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -66,9 +70,12 @@ module.exports = {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
-  			mono: ['var(--font-mono)']
+  			mono: ['var(--font-mono)'],
+  			titulo: ['Georgia', 'Cambria', 'Times New Roman', 'serif']
   		},
   		keyframes: {
+  			fadeUp: { from: { opacity: '0', transform: 'translateY(16px)' }, to: { opacity: '1', transform: 'none' } },
+  			fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -87,6 +94,8 @@ module.exports = {
   			}
   		},
   		animation: {
+  			'fade-up': 'fadeUp .7s ease both',
+  			'fade-in': 'fadeIn .5s ease both',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

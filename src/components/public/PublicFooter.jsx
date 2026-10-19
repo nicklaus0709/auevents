@@ -1,53 +1,56 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, MessageCircle, MapPin } from "lucide-react";
 import { useEvento } from "@/lib/eventoContext";
+import PoweredBy from "@/components/public/PoweredBy";
 
 export default function PublicFooter() {
   const { evento } = useEvento();
   const year = new Date().getFullYear();
+  const social = [
+    { label: "Instagram", url: evento?.instagram_url },
+    { label: "Facebook", url: evento?.facebook_url },
+  ].filter((s) => s.url);
 
   return (
-    <footer className="bg-foreground text-background mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
-        <div className="grid gap-10 md:grid-cols-3">
-          <div>
-            <h3 className="font-heading font-bold text-xl mb-3">Municipalidad de Capioví</h3>
-            <p className="text-sm text-background/70 leading-relaxed">
-              Eventos de la comunidad de Capioví, Misiones. Cultura, gastronomía y tradición.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-heading font-semibold text-sm uppercase tracking-wider mb-3 text-background/60">Secciones</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/eventos" className="hover:text-accent transition-colors">Grilla de Eventos</Link></li>
-              <li><Link to="/gastronomia" className="hover:text-accent transition-colors">Gastronomía</Link></li>
-              <li><Link to="/bonos" className="hover:text-accent transition-colors">Bonos de Colaboración</Link></li>
-              <li><Link to="/contacto" className="hover:text-accent transition-colors">Contacto</Link></li>
+    <footer className="bg-deep bg-festive text-white/80">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+        <div>
+          <p className="font-titulo text-2xl font-bold text-white">{evento?.nombre || "Municipalidad de Capioví"}</p>
+          <p className="mt-3 text-sm leading-relaxed">Eventos de la comunidad de Capioví, Misiones. Cultura, gastronomía y tradición.</p>
+          {social.length > 0 && (
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {social.map((s) => (
+                <li key={s.label}>
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/25 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-white/15">{s.label}</a>
+                </li>
+              ))}
             </ul>
-          </div>
-          <div>
-            <h4 className="font-heading font-semibold text-sm uppercase tracking-wider mb-3 text-background/60">Seguinos</h4>
-            <div className="flex flex-col gap-2 text-sm">
-              <a href={evento?.instagram_url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <Instagram className="h-4 w-4" /> Instagram
-              </a>
-              <a href={evento?.facebook_url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <Facebook className="h-4 w-4" /> Facebook
-              </a>
-              <a href={evento?.whatsapp_url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <MessageCircle className="h-4 w-4" /> WhatsApp
-              </a>
-              <span className="flex items-center gap-2 text-background/60">
-                <MapPin className="h-4 w-4" /> Capioví, Misiones
-              </span>
-            </div>
-          </div>
+          )}
         </div>
-        <div className="mt-10 pt-6 border-t border-background/15 flex flex-col sm:flex-row justify-between gap-3 text-xs text-background/50">
-          <p>© {year} Municipalidad de Capioví. Todos los derechos reservados.</p>
-          <Link to="/admin" className="hover:text-accent transition-colors">Acceso administradores</Link>
+        <nav aria-label="Pie de página">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Explorá</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li><Link to="/" className="hover:text-white">Inicio</Link></li>
+            <li><Link to="/eventos" className="hover:text-white">Grilla de Eventos</Link></li>
+            <li><Link to="/gastronomia" className="hover:text-white">Gastronomía</Link></li>
+            <li><Link to="/bonos" className="hover:text-white">Bonos de colaboración</Link></li>
+            <li><Link to="/contacto" className="hover:text-white">Contacto</Link></li>
+          </ul>
+        </nav>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Contacto</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>📍 Capioví, Misiones</li>
+            {evento?.whatsapp_url && (
+              <li>💬 <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="hover:text-white">WhatsApp de la Municipalidad</a></li>
+            )}
+          </ul>
+          <Link to="/admin" className="mt-5 inline-block text-sm font-semibold text-white underline-offset-4 hover:underline">Acceso administradores →</Link>
         </div>
+      </div>
+      <div className="space-y-4 border-t border-white/10 px-4 py-6 text-center">
+        <p className="text-xs text-white/60">© {year} Municipalidad de Capioví{evento?.nombre ? ` · ${evento.nombre}` : ""}. Todos los derechos reservados.</p>
+        <PoweredBy />
       </div>
     </footer>
   );
