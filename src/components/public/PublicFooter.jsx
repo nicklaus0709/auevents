@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useEvento } from "@/lib/eventoContext";
 import PoweredBy from "@/components/public/PoweredBy";
+import { txt, parseLinks, mostrarBonos } from "@/lib/textos";
 
 export default function PublicFooter() {
   const { evento } = useEvento();
@@ -21,7 +22,7 @@ export default function PublicFooter() {
             {evento?.logo_url && <img src={evento.logo_url} alt="" className="h-14 w-auto rounded-xl bg-white px-2 py-0.5" />}
           </div>
           <p className="font-titulo text-2xl font-bold text-white">{evento?.nombre || "Municipalidad de Capioví"}</p>
-          <p className="mt-3 text-sm leading-relaxed">Eventos de la comunidad de Capioví, Misiones. Cultura, gastronomía y tradición.</p>
+          <p className="mt-3 text-sm leading-relaxed">{txt(evento, "footer_texto")}</p>
           {social.length > 0 && (
             <ul className="mt-5 flex flex-wrap gap-2">
               {social.map((s) => (
@@ -38,24 +39,27 @@ export default function PublicFooter() {
             <li><Link to="/" className="hover:text-white">Inicio</Link></li>
             <li><Link to="/eventos" className="hover:text-white">Grilla de Eventos</Link></li>
             <li><Link to="/gastronomia" className="hover:text-white">Gastronomía</Link></li>
-            <li><Link to="/bonos" className="hover:text-white">Bonos de colaboración</Link></li>
+            {mostrarBonos(evento) && <li><Link to="/bonos" className="hover:text-white">Bonos de colaboración</Link></li>}
             <li><Link to="/contacto" className="hover:text-white">Contacto</Link></li>
           </ul>
         </nav>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Contacto</p>
           <ul className="mt-4 space-y-2 text-sm">
-            <li>📍 Capioví, Misiones</li>
+            {txt(evento, "footer_ubicacion") && <li>📍 {txt(evento, "footer_ubicacion")}</li>}
+            {evento?.telefono && <li>📞 <a href={`tel:${evento.telefono.replace(/[^\d+]/g, "")}`} className="hover:text-white">{evento.telefono}</a></li>}
+            {evento?.email && <li>✉️ <a href={`mailto:${evento.email}`} className="hover:text-white">{evento.email}</a></li>}
             {evento?.whatsapp_url && (
               <li>💬 <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="hover:text-white">WhatsApp de la Municipalidad</a></li>
             )}
           </ul>
-          <ul className="mt-5 space-y-2 text-sm">
-            <li><a href="https://capiovi.misiones.gov.ar" target="_blank" rel="noopener noreferrer" className="hover:text-white">Municipalidad de Capioví</a></li>
-            <li><a href="https://capiovi.misiones.gov.ar/turismo" target="_blank" rel="noopener noreferrer" className="hover:text-white">Turismo</a></li>
-            <li><a href="https://capiovi.misiones.gov.ar/salto-capiovi" target="_blank" rel="noopener noreferrer" className="hover:text-white">Salto Capioví</a></li>
-            <li><a href="https://capiovi.misiones.gov.ar/museo-de-la-inmigracion-alemana" target="_blank" rel="noopener noreferrer" className="hover:text-white">Museo de la Inmigración Alemana</a></li>
-          </ul>
+          {parseLinks(evento).length > 0 && (
+            <ul className="mt-5 space-y-2 text-sm">
+              {parseLinks(evento).map((l) => (
+                <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer" className="hover:text-white">{l.label}</a></li>
+              ))}
+            </ul>
+          )}
           <Link to="/admin" className="mt-5 inline-block text-sm font-semibold text-white underline-offset-4 hover:underline">Acceso administradores →</Link>
         </div>
       </div>

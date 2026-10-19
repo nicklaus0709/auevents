@@ -29,6 +29,89 @@
       "type": "string",
       "description": "Dónde se realiza"
     },
+    "telefono": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "mostrar_bonos": {
+      "type": "boolean",
+      "default": true
+    },
+    "mostrar_chat": {
+      "type": "boolean",
+      "default": true
+    },
+    "hero_eyebrow": {
+      "type": "string"
+    },
+    "cta_principal": {
+      "type": "string"
+    },
+    "cta_secundario": {
+      "type": "string"
+    },
+    "cta_bono": {
+      "type": "string"
+    },
+    "agenda_titulo": {
+      "type": "string"
+    },
+    "nosotros_titulo": {
+      "type": "string"
+    },
+    "historia_titulo": {
+      "type": "string"
+    },
+    "galeria_titulo": {
+      "type": "string"
+    },
+    "bonos_cta_titulo": {
+      "type": "string"
+    },
+    "bonos_cta_texto": {
+      "type": "string"
+    },
+    "eventos_titulo": {
+      "type": "string"
+    },
+    "eventos_subtitulo": {
+      "type": "string"
+    },
+    "gastronomia_titulo": {
+      "type": "string"
+    },
+    "gastronomia_subtitulo": {
+      "type": "string"
+    },
+    "bonos_titulo": {
+      "type": "string"
+    },
+    "bonos_subtitulo": {
+      "type": "string"
+    },
+    "bonos_montos": {
+      "type": "string"
+    },
+    "contacto_titulo": {
+      "type": "string"
+    },
+    "contacto_subtitulo": {
+      "type": "string"
+    },
+    "footer_texto": {
+      "type": "string"
+    },
+    "footer_ubicacion": {
+      "type": "string"
+    },
+    "footer_links": {
+      "type": "string"
+    },
+    "chat_saludo": {
+      "type": "string"
+    },
     "activo": {
       "type": "boolean",
       "default": false

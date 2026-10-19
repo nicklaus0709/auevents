@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatDia, partesDia } from "@/lib/formato";
 import PageHero from "@/components/public/PageHero";
+import { txt } from "@/lib/textos";
 import Spinner from "@/components/public/Spinner";
 
 export default function Eventos() {
@@ -37,7 +38,7 @@ export default function Eventos() {
 
   return (
     <>
-      <PageHero eyebrow={evento?.nombre} title="Grilla de Eventos" subtitle="Artistas, horarios y escenarios del evento." image={evento?.hero_image} />
+      <PageHero eyebrow={evento?.nombre} title={txt(evento, "eventos_titulo")} subtitle={txt(evento, "eventos_subtitulo")} image={evento?.hero_image} />
       <section className="section">
         {fechas.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 py-16 text-center text-stone-500">Aún no hay artistas cargados para este evento.</p>

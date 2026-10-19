@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useEvento } from "@/lib/eventoContext";
+import { txt, mostrarBonos } from "@/lib/textos";
 
 const links = [
   { to: "/", label: "Inicio", end: true },
@@ -16,7 +17,22 @@ export default function PublicNavbar() {
   const [switcher, setSwitcher] = useState(false);
   const { pathname } = useLocation();
 
+  const switcherRef = useRef(null);
+
   useEffect(() => setOpen(false), [pathname]);
+
+  // El desplegable de eventos se cierra al hacer clic afuera o con Escape (no al mover el mouse)
+  useEffect(() => {
+    if (!switcher) return;
+    const onClick = (e) => { if (!switcherRef.current?.contains(e.target)) setSwitcher(false); };
+    const onKey = (e) => { if (e.key === "Escape") setSwitcher(false); };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [switcher]);
 
   return (
     <header className="sticky top-0 z-40 bg-deep text-white shadow-lg">
@@ -43,7 +59,7 @@ export default function PublicNavbar() {
           ))}
 
           {eventos.length > 1 && (
-            <div className="relative ml-1" onMouseLeave={() => setSwitcher(false)}>
+            <div className="relative ml-1" ref={switcherRef}>
               <button
                 onClick={() => setSwitcher((s) => !s)}
                 aria-expanded={switcher}
@@ -69,7 +85,7 @@ export default function PublicNavbar() {
             </div>
           )}
 
-          <Link to="/bonos" className="btn ml-2">Comprar bono</Link>
+          {mostrarBonos(evento) && <Link to="/bonos" className="btn ml-2">{txt(evento, "cta_bono")}</Link>}
         </nav>
 
         <button
@@ -106,7 +122,7 @@ export default function PublicNavbar() {
               </div>
             </div>
           )}
-          <Link to="/bonos" className="btn mt-2 !py-3">Comprar bono de colaboración</Link>
+          {mostrarBonos(evento) && <Link to="/bonos" className="btn mt-2 !py-3">{txt(evento, "cta_bono")}</Link>}
         </nav>
       )}
     </header>

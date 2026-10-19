@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatMoney } from "@/lib/formato";
 import PageHero from "@/components/public/PageHero";
+import { txt } from "@/lib/textos";
 import Spinner from "@/components/public/Spinner";
 
 export default function Gastronomia() {
@@ -40,7 +41,7 @@ export default function Gastronomia() {
 
   return (
     <>
-      <PageHero eyebrow={evento?.nombre} title="Patio gastronómico" subtitle="Encontrá tu puesto por número y mirá qué sirve cada uno." image={evento?.hero_image} />
+      <PageHero eyebrow={evento?.nombre} title={txt(evento, "gastronomia_titulo")} subtitle={txt(evento, "gastronomia_subtitulo")} image={evento?.hero_image} />
       <section className="section">
         {puestos.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 py-16 text-center text-stone-500">Pronto vas a ver acá los puestos gastronómicos.</p>

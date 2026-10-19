@@ -29,6 +29,14 @@ export function EventoProvider({ children }) {
     return () => { mounted = false; };
   }, []);
 
+  // Vuelve a leer los eventos (después de guardar en el admin) para no trabajar con datos viejos
+  const recargar = async () => {
+    const { items } = await base44.entities.Evento.filter({}, { sort: "-activo", limit: 50 });
+    setEventos(items);
+    setEventoId((actual) => (items.some((e) => e.id === actual) ? actual : (items.find((e) => e.activo) || items[0])?.id ?? null));
+    return items;
+  };
+
   const evento = eventos.find((e) => e.id === eventoId) || null;
 
   const seleccionarEvento = (id) => {
@@ -38,7 +46,7 @@ export function EventoProvider({ children }) {
   };
 
   return (
-    <EventoContext.Provider value={{ eventos, evento, eventoId, seleccionarEvento, loading, necesitaSeleccion }}>
+    <EventoContext.Provider value={{ eventos, evento, eventoId, seleccionarEvento, loading, necesitaSeleccion, recargar }}>
       {children}
     </EventoContext.Provider>
   );

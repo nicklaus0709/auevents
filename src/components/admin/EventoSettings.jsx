@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, X, Plus, Check } from "lucide-react";
+import { Upload, X, Plus, Check, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import PageHeader, { Panel, Spinner } from "@/components/admin/PageHeader";
 
 export default function EventoSettings() {
-  const { eventos, evento, seleccionarEvento, loading } = useEvento();
+  const { eventos, evento, seleccionarEvento, loading, recargar } = useEvento();
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -36,6 +36,7 @@ export default function EventoSettings() {
     setSaving(true);
     try {
       await base44.entities.Evento.update(form.id, form);
+      await recargar();
       toast({ title: "Evento actualizado" });
     } catch (err) {
       toast({ title: "Error", variant: "destructive" });
@@ -51,6 +52,7 @@ export default function EventoSettings() {
         if (e.activo && e.id !== ev.id) await base44.entities.Evento.update(e.id, { activo: false });
       }
       await base44.entities.Evento.update(ev.id, { activo: true });
+      await recargar();
       toast({ title: `${ev.nombre} es ahora el evento activo` });
       seleccionarEvento(ev.id);
     } catch (err) {
@@ -69,6 +71,7 @@ export default function EventoSettings() {
         color_acento: "#D4A017",
         instagram_url: "", facebook_url: "", whatsapp_url: "", mp_link: "",
       });
+      await recargar();
       seleccionarEvento(rec.id);
       setNuevo({ nombre: "", slug: "" });
       toast({ title: "Evento creado" });
@@ -80,7 +83,34 @@ export default function EventoSettings() {
   };
 
 
+  const eliminarEvento = async () => {
+    if (!confirm(`¿Eliminar el evento "${evento.nombre}"? Sus artistas, puestos, fotos y demás contenido quedan sin evento y dejan de verse. Esta acción no se puede deshacer.`)) return;
+    try {
+      await base44.entities.Evento.delete(evento.id);
+      const items = await recargar();
+      if (items[0]) seleccionarEvento((items.find((e) => e.activo) || items[0]).id);
+      toast({ title: "Evento eliminado" });
+    } catch (err) {
+      toast({ title: "No se pudo eliminar", variant: "destructive" });
+    }
+  };
+
   if (loading || !form) return <Spinner />;
+
+  const Toggle = ({ k, label, hint }) => {
+    const on = form[k] !== false;
+    return (
+      <div className="flex items-start justify-between gap-4 rounded-xl border border-border p-4">
+        <div>
+          <p className="text-sm font-semibold">{label}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
+        </div>
+        <button type="button" role="switch" aria-checked={on} onClick={() => setForm({ ...form, [k]: !on })} className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-input"}`}>
+          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? "translate-x-5" : "translate-x-0.5"}`} />
+        </button>
+      </div>
+    );
+  };
 
   const ImageField = ({ k, label, hint }) => (
     <div className="space-y-2">
@@ -176,6 +206,19 @@ export default function EventoSettings() {
           </div>
         </Panel>
 
+        <Panel title="Contacto y secciones" description="Datos de contacto del pie de página y qué secciones se muestran.">
+          <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {text("telefono", "Teléfono", { placeholder: "Ej: 03743 49-0000" })}
+              {text("email", "Email", { placeholder: "turismo@capiovi.gob.ar" })}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Toggle k="mostrar_bonos" label="Bonos de colaboración" hint="Muestra u oculta la página de bonos, sus botones y el bloque en la portada." />
+              <Toggle k="mostrar_chat" label="Asistente de chat" hint="Muestra u oculta el botón del chat flotante." />
+            </div>
+          </div>
+        </Panel>
+
         <Panel title="Redes y pagos">
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-3">
@@ -184,6 +227,13 @@ export default function EventoSettings() {
               {text("whatsapp_url", "WhatsApp URL")}
             </div>
             {text("mp_link", "Link de Mercado Pago (bonos)", { placeholder: "https://mp..." })}
+          </div>
+        </Panel>
+
+        <Panel title="Zona de peligro" className="border-destructive/30">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="max-w-xl text-sm text-muted-foreground">Eliminar este evento lo saca del sitio. El contenido asociado (artistas, puestos, fotos…) deja de mostrarse.</p>
+            <Button variant="destructive" onClick={eliminarEvento}><Trash2 className="h-4 w-4" /> Eliminar evento</Button>
           </div>
         </Panel>
 

@@ -7,6 +7,7 @@ import ChatWidget from "@/components/public/ChatWidget";
 import SelectorEventos from "@/components/public/SelectorEventos";
 import { useEvento } from "@/lib/eventoContext";
 import { esNavidad, hexToRgbTriplet } from "@/lib/formato";
+import { mostrarChat } from "@/lib/textos";
 
 export default function PublicLayout() {
   const { evento, eventos, seleccionarEvento, loading, necesitaSeleccion } = useEvento();
@@ -36,7 +37,7 @@ export default function PublicLayout() {
       </main>
       <PublicidadTicker />
       <PublicFooter />
-      <ChatWidget />
+      {mostrarChat(evento) && <ChatWidget />}
     </div>
   );
 }

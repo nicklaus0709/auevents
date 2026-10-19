@@ -3,9 +3,29 @@
 // Las fotos salen de public/navidad/. No se inventan horarios, puestos ni contactos que el sitio
 // original no publica: eso se completa desde /admin. Es idempotente (slug "navidad-capiovi").
 
+// Historia: intro + línea de tiempo ("AAAA – Título" seguido de su párrafo). Los años se dibujan como hitos.
+const HISTORIA = [
+  "Navidad en Capioví se viene realizando de forma ininterrumpida desde hace más de 11 años, con el esfuerzo de personas que donan voluntariamente su tiempo y conocimientos. Todo nació de reutilizar botellas descartables para transformarlas en adornos navideños.",
+  "2009 – Los inicios",
+  "Nació como un proyecto de un grupo de Catequesis Familiar de la Parroquia San Luis Gonzaga, para decorar la Iglesia y sus alrededores. Tomaron como ejemplo actividades similares de Brasil, donde con botellas descartables se elaboran objetos navideños. Fue una manera de mostrar a los niños otra forma de contribuir al desarrollo de su comunidad y de cuidar el medio ambiente. Unas 50 personas voluntarias reutilizaron cerca de 3.000 botellas plásticas, con financiación de los propios vecinos.",
+  "2010 – Toda la avenida",
+  "Ante la excelente repercusión se sumaron más vecinos. Los adornos abarcaron toda la Avenida San Luis Gonzaga y se agregó un árbol navideño de unos 10 metros en la Plaza Los Pioneros. Se reutilizaron unas 9.000 botellas con unos 80 voluntarios.",
+  "2012 – El taller y los arbolitos auspiciados",
+  "El grupo empezó a trabajar en un lugar propio para confeccionar los adornos, cedido por el Instituto Nuestra Señora de Itatí. Comercios y familias auspiciaron 28 arbolitos de 3 metros sobre el boulevard. Se reutilizaron unas 14.000 botellas y el grupo llegó a 120 voluntarios.",
+  "2013 – El trineo con renos",
+  "Se decoraron las farolas de la RN 12 y los edificios públicos. El proyecto más importante fue un trineo con 5 renos a escala real, posible gracias al aporte de tres empresas y de la Municipalidad.",
+].join("\n\n");
+
 const existentes = await base44.entities.Evento.filter({ slug: "navidad-capiovi" }, { limit: 1 });
 if ((existentes.items || []).length) {
-  console.log("Ya existe el evento, no se crea nada.");
+  // Ya cargado: solo completa la historia si todavía está vacía (no pisa lo editado en /admin)
+  const ev = existentes.items[0];
+  if (!ev.historia) {
+    await base44.entities.Evento.update(ev.id, { historia: HISTORIA });
+    console.log("Evento existente: se cargó la historia.");
+  } else {
+    console.log("Ya existe el evento, no se crea nada.");
+  }
 } else {
   const img = (n) => `/navidad/${n}`;
 
@@ -18,6 +38,7 @@ if ((existentes.items || []).length) {
     lugar: "Capioví, Misiones, Argentina",
     nosotros:
       "Desde hace más de una década, Navidad en Capioví se realiza sin interrupciones gracias al trabajo de vecinos y vecinas que donan voluntariamente su tiempo y sus conocimientos.\n\nEs una propuesta que refleja pertenencia, compromiso y respeto mutuo, unida por un mismo lema: «AMOR A SU PUEBLO».",
+    historia: HISTORIA,
     activo: true,
     color_primario: "#c1121f",
     color_acento: "#15803d",

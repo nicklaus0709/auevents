@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { toast } from "@/components/ui/use-toast";
 import PageHero from "@/components/public/PageHero";
+import { txt } from "@/lib/textos";
 import Spinner from "@/components/public/Spinner";
 
 export default function Contacto() {
@@ -33,8 +34,8 @@ export default function Contacto() {
     <>
       <PageHero
         eyebrow={evento?.nombre}
-        title="Contacto"
-        subtitle="¿Querés participar como artista o tener un puesto gastronómico? Escribinos."
+        title={txt(evento, "contacto_titulo")}
+        subtitle={txt(evento, "contacto_subtitulo")}
         image={evento?.hero_image}
       />
       <section className="section max-w-3xl">

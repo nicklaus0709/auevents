@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatFechaLarga, parseHistory, partesDia } from "@/lib/formato";
+import { txt, mostrarBonos } from "@/lib/textos";
 import Gallery from "@/components/public/Gallery";
 import Spinner from "@/components/public/Spinner";
 
@@ -74,13 +75,13 @@ export default function Home() {
               <img src={evento.logo_url} alt={evento.nombre} className="h-20 w-auto sm:h-24" />
             </div>
           )}
-          <p className="animate-fade-up mb-3 text-xs font-bold uppercase tracking-[0.3em] text-white/80">Capioví · Misiones · Argentina</p>
+          <p className="animate-fade-up mb-3 text-xs font-bold uppercase tracking-[0.3em] text-white/80">{txt(evento, "hero_eyebrow")}</p>
           <h1 className="animate-fade-up max-w-3xl text-balance font-titulo text-5xl !text-white sm:text-7xl">{evento.nombre}</h1>
           {evento.descripcion && <p className="animate-fade-up mt-5 max-w-2xl text-lg text-white/90 sm:text-xl">{evento.descripcion}</p>}
           <div className="animate-fade-up mt-8 flex flex-wrap gap-3">
-            <Link to="/eventos" className="btn-light">Ver grilla de eventos</Link>
-            <Link to="/gastronomia" className="btn-ghost">Gastronomía</Link>
-            <Link to="/bonos" className="btn !px-6 !py-3">Comprar bono</Link>
+            <Link to="/eventos" className="btn-light">{txt(evento, "cta_principal")}</Link>
+            <Link to="/gastronomia" className="btn-ghost">{txt(evento, "cta_secundario")}</Link>
+            {mostrarBonos(evento) && <Link to="/bonos" className="btn !px-6 !py-3">{txt(evento, "cta_bono")}</Link>}
           </div>
         </div>
       </section>
@@ -92,7 +93,9 @@ export default function Home() {
           {donde && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Dónde</dt><dd className="mt-1 font-bold text-stone-900">{donde}</dd></div>}
           <div className="bg-white p-5">
             <dt className="text-xs font-bold uppercase tracking-widest text-brand">Más info</dt>
-            <dd className="mt-1 font-bold text-stone-900"><Link to="/contacto" className="underline">Escribinos</Link></dd>
+            <dd className="mt-1 font-bold text-stone-900">
+              {evento.telefono || evento.email || <Link to="/contacto" className="underline">Escribinos</Link>}
+            </dd>
           </div>
         </dl>
       </div>
@@ -101,7 +104,7 @@ export default function Home() {
       {destacados.length > 0 && (
         <section className="section">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <div><p className="eyebrow">Agenda</p><h2 className="text-3xl sm:text-4xl">Próximas actividades</h2></div>
+            <div><p className="eyebrow">Agenda</p><h2 className="text-3xl sm:text-4xl">{txt(evento, "agenda_titulo")}</h2></div>
             <Link to="/eventos" className="text-sm font-bold text-brand hover:underline">Ver toda la grilla →</Link>
           </div>
           <ul className="mt-8 grid gap-5 md:grid-cols-3">
@@ -139,7 +142,7 @@ export default function Home() {
           <div className="section grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="eyebrow">Nosotros</p>
-              <h2 className="text-3xl sm:text-4xl">Una celebración de toda la comunidad</h2>
+              <h2 className="text-3xl sm:text-4xl">{txt(evento, "nosotros_titulo")}</h2>
               <div className="mt-5 space-y-4 leading-relaxed text-stone-700">{nosotros.map((t, i) => <p key={i}>{t}</p>)}</div>
               {evento.lema && <p className="mt-6 border-l-4 border-brand pl-4 font-titulo text-2xl font-bold italic text-stone-900">“{evento.lema}”</p>}
               <div className="mt-6 flex flex-wrap gap-3">
@@ -162,7 +165,7 @@ export default function Home() {
         <section id="historia" className="bg-deep bg-festive text-white">
           <div className="section">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-white/70">Historia</p>
-            <h2 className="text-3xl !text-white sm:text-4xl">Cómo llegamos hasta acá</h2>
+            <h2 className="text-3xl !text-white sm:text-4xl">{txt(evento, "historia_titulo")}</h2>
             {historia.intro.map((t, i) => <p key={i} className="mt-5 max-w-3xl leading-relaxed text-white/85">{t}</p>)}
             {historia.items.length > 0 && (
               <ol className="relative mt-12 space-y-8 border-l-2 border-white/25 pl-8 sm:ml-4">
@@ -183,18 +186,19 @@ export default function Home() {
       {fotos.length > 0 && (
         <section id="galeria" className="section">
           <p className="eyebrow">Galería</p>
-          <h2 className="mb-8 text-3xl sm:text-4xl">Momentos que se quedan en el corazón</h2>
+          <h2 className="mb-8 text-3xl sm:text-4xl">{txt(evento, "galeria_titulo")}</h2>
           <Gallery images={fotos} alt={`Foto de ${evento.nombre}`} />
         </section>
       )}
 
       {/* CTA BONOS */}
+      {mostrarBonos(evento) && (
       <section className="px-4 pb-16 sm:px-6">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-brand bg-festive text-white shadow-2xl ring-4 ring-white">
           <div className="p-8 sm:p-14">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/80">Bonos de colaboración</p>
-          <h2 className="mt-2 max-w-xl text-3xl !text-white sm:text-4xl">Sumate: tu aporte hace posible el evento</h2>
-          <p className="mt-3 max-w-xl text-white/90">Registrá tu bono y colaborá con la comunidad de Capioví.</p>
+          <h2 className="mt-2 max-w-xl text-3xl !text-white sm:text-4xl">{txt(evento, "bonos_cta_titulo")}</h2>
+          <p className="mt-3 max-w-xl text-white/90">{txt(evento, "bonos_cta_texto")}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link to="/bonos" className="btn-light">Ver bonos</Link>
             {evento.whatsapp_url && (
@@ -205,6 +209,7 @@ export default function Home() {
           <div className="stripe-candy" aria-hidden="true" />
         </div>
       </section>
+      )}
     </>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatDia } from "@/lib/formato";
+import { txt } from "@/lib/textos";
 
 /** Responde con los datos publicados (grilla, puestos, bonos), sin servicios externos. */
 function reply(question, evento, c) {
@@ -30,7 +31,7 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [data, setData] = useState({ artistas: [], puestos: [], productos: [] });
-  const [msgs, setMsgs] = useState([{ role: "bot", text: "¡Hola! Soy el asistente del evento. Preguntame por la programación, los puestos de comida o los bonos 🎉" }]);
+  const [msgs, setMsgs] = useState(() => [{ role: "bot", text: txt(evento, "chat_saludo") }]);
   const end = useRef(null);
 
   // Los datos se cargan recién cuando se abre el chat por primera vez

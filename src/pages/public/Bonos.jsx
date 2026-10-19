@@ -5,9 +5,9 @@ import { useEvento } from "@/lib/eventoContext";
 import { formatMoney } from "@/lib/formato";
 import { toast } from "@/components/ui/use-toast";
 import PageHero from "@/components/public/PageHero";
+import { Navigate } from "react-router-dom";
+import { txt, parseMontos, mostrarBonos } from "@/lib/textos";
 import Spinner from "@/components/public/Spinner";
-
-const MONTOS = [2000, 5000, 10000, 20000];
 
 export default function Bonos() {
   const { evento, loading } = useEvento();
@@ -46,13 +46,15 @@ export default function Bonos() {
   };
 
   if (loading) return <Spinner />;
+  if (evento && !mostrarBonos(evento)) return <Navigate to="/" replace />;
+  const MONTOS = parseMontos(evento);
 
   return (
     <>
       <PageHero
         eyebrow={evento?.nombre}
-        title="Bonos de colaboración"
-        subtitle="Tu aporte ayuda a que el evento sea posible. Todos los bonos ayudan a sostener la fiesta."
+        title={txt(evento, "bonos_titulo")}
+        subtitle={txt(evento, "bonos_subtitulo")}
         image={evento?.hero_image}
       />
       <section className="section max-w-3xl">

@@ -8,17 +8,19 @@ import MensajesManager from "@/components/admin/MensajesManager";
 import BonosManager from "@/components/admin/BonosManager";
 import QrManager from "@/components/admin/QrManager";
 import Resumen from "@/components/admin/Resumen";
+import TextosSitio from "@/components/admin/TextosSitio";
 import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import {
   Settings, Music, UtensilsCrossed, Package, Megaphone, Images,
-  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check
+  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SECCIONES = [
   { id: "resumen", grupo: "General", label: "Resumen", icon: LayoutDashboard, component: Resumen },
   { id: "evento", grupo: "General", label: "Configuración", icon: Settings, component: EventoSettings },
+  { id: "textos", grupo: "General", label: "Textos del sitio", icon: Type, component: TextosSitio },
   { id: "artistas", grupo: "Contenido", label: "Artistas", icon: Music, component: () => (
     <CrudManager entityName="Artista" title="Artistas" description="Grilla de eventos: artistas, horarios y escenarios."
       fields={[
