@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Plus, Check } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import PageHeader, { Panel, Spinner } from "@/components/admin/PageHeader";
 
 export default function EventoSettings() {
   const { eventos, evento, seleccionarEvento, loading } = useEvento();
@@ -78,84 +79,117 @@ export default function EventoSettings() {
     }
   };
 
-  if (loading || !form) return <div className="py-12 text-center"><div className="w-7 h-7 border-4 border-border border-t-foreground rounded-full animate-spin mx-auto" /></div>;
 
-  const ImageField = ({ k, label }) => (
+  if (loading || !form) return <Spinner />;
+
+  const ImageField = ({ k, label, hint }) => (
     <div className="space-y-2">
       <Label>{label}</Label>
-      {form[k] && (
+      {form[k] ? (
         <div className="relative inline-block">
-          <img src={form[k]} alt="" className="h-24 w-full max-w-xs object-cover rounded-md border border-border" />
-          <button type="button" onClick={() => setForm({ ...form, [k]: "" })} className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"><X className="h-3 w-3" /></button>
+          <img src={form[k]} alt="" className="h-28 w-full max-w-xs rounded-xl border border-border bg-secondary object-cover" />
+          <button type="button" onClick={() => setForm({ ...form, [k]: "" })} aria-label="Quitar imagen" className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"><X className="h-3 w-3" /></button>
         </div>
+      ) : (
+        <div className="flex h-28 max-w-xs items-center justify-center rounded-xl border border-dashed border-border bg-secondary/50 text-xs text-muted-foreground">Sin imagen</div>
       )}
-      <label className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-md text-sm cursor-pointer hover:bg-secondary">
-        <Upload className="h-4 w-4" /> Subir imagen
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold transition hover:bg-accent">
+        <Upload className="h-3.5 w-3.5" /> Subir imagen
         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleUpload(e, k)} />
       </label>
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
+  );
+
+  const ColorField = ({ k, label, fallback }) => (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <div className="flex items-center gap-2">
+        <input type="color" value={form[k] || fallback} onChange={(e) => setForm({ ...form, [k]: e.target.value })} className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-background p-1" />
+        <Input value={form[k] || ""} onChange={(e) => setForm({ ...form, [k]: e.target.value })} placeholder={fallback} />
+      </div>
+    </div>
+  );
+
+  const text = (k, label, props = {}) => (
+    <div className="space-y-1.5"><Label>{label}</Label><Input value={form[k] || ""} onChange={(e) => setForm({ ...form, [k]: e.target.value })} {...props} /></div>
   );
 
   return (
     <div>
-      <h2 className="font-heading font-bold text-2xl mb-1">Configuración del evento</h2>
-      <p className="text-muted-foreground text-sm mb-6">Editá los datos generales de <strong>{evento.nombre}</strong>.</p>
-
-      {/* Lista de eventos */}
-      <div className="mb-8 p-4 border border-border rounded-lg bg-secondary/30">
-        <p className="text-sm font-medium mb-3">Eventos disponibles</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {eventos.map((e) => (
-            <div key={e.id} className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm ${e.id === evento.id ? "border-foreground bg-background" : "border-border bg-background"}`}>
-              <span className="h-2.5 w-2.5 rounded-full" style={{ background: e.color_acento || "#D4A017" }} />
-              {e.nombre}
-              {e.activo && <span className="text-[10px] uppercase tracking-wider text-accent font-semibold">Activo</span>}
-              {!e.activo && <button onClick={() => setActivo(e)} className="text-xs underline text-muted-foreground hover:text-foreground">activar</button>
-              }
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-end gap-2 pt-3 border-t border-border">
-          <div className="space-y-1">
-            <Label className="text-xs">Nombre del nuevo evento</Label>
-            <Input value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} placeholder="Ej: Fiesta Rural" className="h-9" />
-          </div>
-          <Button onClick={crearEvento} disabled={creating || !nuevo.nombre} variant="outline" size="sm"><Plus className="h-4 w-4 mr-1" /> Crear evento</Button>
-        </div>
-      </div>
+      <PageHeader title="Configuración del evento" description={`Datos generales de ${evento.nombre}. Se muestran en el sitio público.`}>
+        <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar cambios"}</Button>
+      </PageHeader>
 
       <div className="space-y-5">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5"><Label>Nombre *</Label><Input value={form.nombre || ""} onChange={(e) => setForm({ ...form, nombre: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>Identificador (slug)</Label><Input value={form.slug || ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
-        </div>
-        <div className="space-y-1.5"><Label>Descripción corta</Label><Textarea value={form.descripcion || ""} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={2} /></div>
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div className="space-y-1.5"><Label>Lema</Label><Input value={form.lema || ""} onChange={(e) => setForm({ ...form, lema: e.target.value })} placeholder="Ej: AMOR A SU PUEBLO" /></div>
-          <div className="space-y-1.5"><Label>Cuándo (texto libre)</Label><Input value={form.periodo || ""} onChange={(e) => setForm({ ...form, periodo: e.target.value })} placeholder="Ej: Del 29/11 a fines de enero" /></div>
-          <div className="space-y-1.5"><Label>Dónde</Label><Input value={form.lugar || ""} onChange={(e) => setForm({ ...form, lugar: e.target.value })} placeholder="Ej: Plaza central" /></div>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5"><Label>Nosotros</Label><Textarea value={form.nosotros || ""} onChange={(e) => setForm({ ...form, nosotros: e.target.value })} rows={4} /></div>
-          <div className="space-y-1.5"><Label>Historia</Label><Textarea value={form.historia || ""} onChange={(e) => setForm({ ...form, historia: e.target.value })} rows={4} /></div>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5"><Label>Color de acento</Label><div className="flex items-center gap-2"><input type="color" value={form.color_acento || "#D4A017"} onChange={(e) => setForm({ ...form, color_acento: e.target.value })} className="h-10 w-14 rounded border border-border" /><Input value={form.color_acento || ""} onChange={(e) => setForm({ ...form, color_acento: e.target.value })} /></div></div>
-          <div className="space-y-1.5"><Label>Color primario</Label><div className="flex items-center gap-2"><input type="color" value={form.color_primario || "#1A1C19"} onChange={(e) => setForm({ ...form, color_primario: e.target.value })} className="h-10 w-14 rounded border border-border" /><Input value={form.color_primario || ""} onChange={(e) => setForm({ ...form, color_primario: e.target.value })} /></div></div>
-        </div>
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div className="space-y-1.5"><Label>Instagram URL</Label><Input value={form.instagram_url || ""} onChange={(e) => setForm({ ...form, instagram_url: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>Facebook URL</Label><Input value={form.facebook_url || ""} onChange={(e) => setForm({ ...form, facebook_url: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>WhatsApp URL</Label><Input value={form.whatsapp_url || ""} onChange={(e) => setForm({ ...form, whatsapp_url: e.target.value })} /></div>
-        </div>
-        <div className="space-y-1.5"><Label>Link de Mercado Pago (bonos)</Label><Input value={form.mp_link || ""} onChange={(e) => setForm({ ...form, mp_link: e.target.value })} placeholder="https://mp..." /></div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <ImageField k="hero_image" label="Imagen principal (hero)" />
-          <ImageField k="logo_url" label="Logo del evento" />
-        </div>
-        <div className="flex items-center gap-3 pt-2">
-          <Button onClick={save} disabled={saving}>{saving ? "Guardando..." : "Guardar cambios"}</Button>
-          <button type="button" onClick={() => setActivo(evento)} className="text-sm flex items-center gap-1.5 px-3 py-2 rounded-md hover:bg-secondary">
+        {/* Eventos */}
+        <Panel title="Eventos" description="El evento activo es el que se muestra por defecto en el sitio.">
+          <div className="mb-4 flex flex-wrap gap-2">
+            {eventos.map((e) => (
+              <div key={e.id} className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm ${e.id === evento.id ? "border-primary bg-primary/5 font-semibold" : "border-border bg-background"}`}>
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: e.color_primario || e.color_acento || "#16a34a" }} />
+                {e.nombre}
+                {e.activo
+                  ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">Activo</span>
+                  : <button onClick={() => setActivo(e)} className="text-xs text-muted-foreground underline hover:text-foreground">activar</button>}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-end gap-2 border-t border-border pt-4">
+            <div className="space-y-1">
+              <Label className="text-xs">Nuevo evento</Label>
+              <Input value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} placeholder="Ej: Fiesta Rural" className="h-9 w-64" />
+            </div>
+            <Button onClick={crearEvento} disabled={creating || !nuevo.nombre} variant="outline" size="sm"><Plus className="h-4 w-4" /> Crear evento</Button>
+          </div>
+        </Panel>
+
+        <Panel title="Datos generales">
+          <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {text("nombre", "Nombre *")}
+              {text("slug", "Identificador (slug)")}
+            </div>
+            <div className="space-y-1.5"><Label>Descripción corta</Label><Textarea value={form.descripcion || ""} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={2} /></div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {text("lema", "Lema", { placeholder: "Ej: AMOR A SU PUEBLO" })}
+              {text("periodo", "Cuándo (texto libre)", { placeholder: "Ej: Del 29/11 a fines de enero" })}
+              {text("lugar", "Dónde", { placeholder: "Ej: Plaza central" })}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5"><Label>Nosotros</Label><Textarea value={form.nosotros || ""} onChange={(e) => setForm({ ...form, nosotros: e.target.value })} rows={5} /></div>
+              <div className="space-y-1.5"><Label>Historia</Label><Textarea value={form.historia || ""} onChange={(e) => setForm({ ...form, historia: e.target.value })} rows={5} /></div>
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Identidad visual" description="Colores e imágenes del evento.">
+          <div className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ColorField k="color_primario" label="Color primario" fallback="#c1121f" />
+              <ColorField k="color_acento" label="Color secundario" fallback="#15803d" />
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <ImageField k="hero_image" label="Imagen principal (hero)" hint="Se muestra en la portada y en la pantalla de selección." />
+              <ImageField k="logo_url" label="Logo del evento" hint="Se muestra en el encabezado del sitio." />
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Redes y pagos">
+          <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-3">
+              {text("instagram_url", "Instagram URL")}
+              {text("facebook_url", "Facebook URL")}
+              {text("whatsapp_url", "WhatsApp URL")}
+            </div>
+            {text("mp_link", "Link de Mercado Pago (bonos)", { placeholder: "https://mp..." })}
+          </div>
+        </Panel>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar cambios"}</Button>
+          <button type="button" onClick={() => setActivo(evento)} className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition hover:bg-secondary">
             <Check className="h-4 w-4" /> Marcar como evento activo
           </button>
         </div>

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { toast } from "@/components/ui/use-toast";
-import { Trash2 } from "lucide-react";
+import { Trash2, Inbox } from "lucide-react";
+import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
 
 const ESTADOS = [
   { value: "pendiente", label: "Pendiente", color: "bg-amber-100 text-amber-700" },
@@ -58,46 +59,45 @@ export default function BonosManager() {
 
   return (
     <div>
-      <h2 className="font-heading font-bold text-2xl mb-1">Bonos de colaboración</h2>
-      <p className="text-muted-foreground text-sm mb-6">Solicitudes y estado de pago de los bonos.</p>
+      <PageHeader title="Bonos de colaboración" description="Solicitudes y estado de pago de los bonos." />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-        <div className="border border-border rounded-lg p-4 bg-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Bonos verificados</p>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bonos verificados</p>
           <p className="font-heading font-bold text-2xl mt-1">{stats.total}</p>
         </div>
-        <div className="border border-border rounded-lg p-4 bg-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Total recaudado</p>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total recaudado</p>
           <p className="font-heading font-bold text-2xl mt-1">${stats.monto.toLocaleString("es-AR")}</p>
         </div>
-        <div className="border border-border rounded-lg p-4 bg-card">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Solicitudes totales</p>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Solicitudes totales</p>
           <p className="font-heading font-bold text-2xl mt-1">{bonos.length}</p>
         </div>
       </div>
 
       {loading ? (
-        <div className="py-12 text-center"><div className="w-7 h-7 border-4 border-border border-t-foreground rounded-full animate-spin mx-auto" /></div>
+        <Spinner />
       ) : bonos.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-border rounded-xl text-muted-foreground">No hay solicitudes de bonos todavía.</div>
+        <EmptyState icon={Inbox}>No hay solicitudes de bonos todavía.</EmptyState>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-secondary/50 border-b border-border">
+              <thead className="border-b border-border bg-secondary/60">
                 <tr>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Código</th>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Nombre</th>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Contacto</th>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Monto</th>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Fecha</th>
-                  <th className="text-left font-medium px-4 py-3 text-muted-foreground">Estado</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Código</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nombre</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contacto</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monto</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {bonos.map((b) => (
-                  <tr key={b.id} className="hover:bg-secondary/30">
+                  <tr key={b.id} className="transition-colors hover:bg-accent/40">
                     <td className="px-4 py-3 font-mono text-xs">{b.codigo || "—"}</td>
                     <td className="px-4 py-3">{b.nombre}</td>
                     <td className="px-4 py-3 text-muted-foreground">{b.email}{b.telefono && ` · ${b.telefono}`}</td>
@@ -107,12 +107,12 @@ export default function BonosManager() {
                       <select
                         value={b.estado}
                         onChange={(e) => cambiarEstado(b, e.target.value)}
-                        className={`h-8 text-xs rounded-md border-0 px-2 font-medium ${(ESTADOS.find((s) => s.value === b.estado) || ESTADOS[0]).color}`}
+                        className={`h-8 rounded-full border-0 px-3 text-xs font-semibold ${(ESTADOS.find((s) => s.value === b.estado) || ESTADOS[0]).color}`}
                       >
                         {ESTADOS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-right"><button onClick={() => eliminar(b)} className="p-1.5 hover:bg-secondary rounded text-destructive"><Trash2 className="h-4 w-4" /></button></td>
+                    <td className="px-4 py-3 text-right"><button onClick={() => eliminar(b)} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button></td>
                   </tr>
                 ))}
               </tbody>

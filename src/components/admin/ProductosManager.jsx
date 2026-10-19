@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import CrudManager from "@/components/admin/CrudManager";
+import PageHeader, { EmptyState } from "@/components/admin/PageHeader";
 
 export default function ProductosManager() {
   const { evento } = useEvento();
@@ -23,8 +24,8 @@ export default function ProductosManager() {
   if (puestos.length === 0) {
     return (
       <div>
-        <h2 className="font-heading font-bold text-2xl mb-1">Productos</h2>
-        <p className="text-muted-foreground text-sm mt-4">Primero creá al menos un puesto gastronómico para poder cargar productos.</p>
+        <PageHeader title="Productos" description="Productos de cada puesto gastronómico." />
+        <EmptyState>Primero creá al menos un puesto gastronómico para poder cargar productos.</EmptyState>
       </div>
     );
   }

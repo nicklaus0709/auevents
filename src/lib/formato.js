@@ -50,3 +50,6 @@ export function parseHistory(text) {
   }
   return { intro, items };
 }
+
+/** El evento de Navidad es el único que lleva la decoración navideña (luces, nieve, bastones). */
+export const esNavidad = (evento) => /navidad/i.test(`${evento?.nombre || ""} ${evento?.slug || ""}`);

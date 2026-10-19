@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { toast } from "@/components/ui/use-toast";
-import { Mail, Phone, Trash2 } from "lucide-react";
+import { Mail, Phone, Trash2, Inbox } from "lucide-react";
+import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
 
 const ESTADOS = [
   { value: "nuevo", label: "Nuevo", color: "bg-blue-100 text-blue-700" },
@@ -55,17 +56,16 @@ export default function MensajesManager() {
 
   return (
     <div>
-      <h2 className="font-heading font-bold text-2xl mb-1">Mensajes de contacto</h2>
-      <p className="text-muted-foreground text-sm mb-6">Solicitudes de artistas y puestos gastronómicos.</p>
+      <PageHeader title="Mensajes de contacto" description="Solicitudes de artistas y puestos gastronómicos." count={loading ? undefined : mensajes.length} />
 
       {loading ? (
-        <div className="py-12 text-center"><div className="w-7 h-7 border-4 border-border border-t-foreground rounded-full animate-spin mx-auto" /></div>
+        <Spinner />
       ) : mensajes.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-border rounded-xl text-muted-foreground">No hay mensajes todavía.</div>
+        <EmptyState icon={Inbox}>No hay mensajes todavía.</EmptyState>
       ) : (
         <div className="space-y-3">
           {mensajes.map((m) => (
-            <div key={m.id} className="border border-border rounded-lg p-4 bg-card">
+            <div key={m.id} className="rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-md">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -84,11 +84,11 @@ export default function MensajesManager() {
                   <select
                     value={m.estado}
                     onChange={(e) => cambiarEstado(m, e.target.value)}
-                    className="h-8 text-xs rounded-md border border-input bg-background px-2"
+                    className="h-8 rounded-lg border border-input bg-background px-2 text-xs"
                   >
                     {ESTADOS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
                   </select>
-                  <button onClick={() => eliminar(m)} className="p-1.5 hover:bg-secondary rounded text-destructive"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => eliminar(m)} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
             </div>

@@ -6,7 +6,7 @@ import PublicidadTicker from "@/components/public/PublicidadTicker";
 import ChatWidget from "@/components/public/ChatWidget";
 import SelectorEventos from "@/components/public/SelectorEventos";
 import { useEvento } from "@/lib/eventoContext";
-import { hexToRgbTriplet } from "@/lib/formato";
+import { esNavidad, hexToRgbTriplet } from "@/lib/formato";
 
 export default function PublicLayout() {
   const { evento, eventos, seleccionarEvento, loading, necesitaSeleccion } = useEvento();
@@ -29,7 +29,7 @@ export default function PublicLayout() {
   };
 
   return (
-    <div className="public-site min-h-screen flex flex-col" style={theme}>
+    <div className={`public-site min-h-screen flex flex-col ${esNavidad(evento) ? "navidad" : ""}`} style={theme}>
       <PublicNavbar />
       <main className="flex-1">
         <Outlet />

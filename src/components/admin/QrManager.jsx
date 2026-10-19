@@ -1,6 +1,7 @@
 import React from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Download, Printer } from "lucide-react";
+import PageHeader from "@/components/admin/PageHeader";
 
 const ITEMS = [
   { key: "artistas", titulo: "Grilla de artistas", path: "/eventos" },
@@ -38,31 +39,28 @@ export default function QrManager() {
 
   return (
     <div>
-      <h2 className="font-heading font-bold text-2xl mb-1">Códigos QR</h2>
-      <p className="text-muted-foreground text-sm mb-6">
-        Códigos para imprimir o afichar: al escanearlos, el visitante llega directo a la grilla de artistas o a la gastronomía.
-      </p>
+      <PageHeader title="Códigos QR" description="Códigos para imprimir o afichar: al escanearlos, el visitante llega directo a la grilla de artistas o a la gastronomía." />
       <div className="grid gap-4 sm:grid-cols-2">
         {ITEMS.map((it) => {
           const url = urlBase + it.path;
           const id = "qr-" + it.key;
           return (
-            <div key={it.key} className="flex flex-col items-center rounded-xl border border-border bg-card p-5 text-center">
+            <div key={it.key} className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
               <p className="font-heading text-lg font-semibold">{it.titulo}</p>
-              <div className="mt-3 rounded-lg border border-border bg-white p-3">
-                <QRCodeCanvas id={id} value={url} size={180} fgColor="#111827" bgColor="#ffffff" />
+              <div className="mt-4 rounded-2xl border border-border bg-white p-4 shadow-inner">
+                <QRCodeCanvas id={id} value={url} size={180} fgColor="#0c1f14" bgColor="#ffffff" />
               </div>
               <p className="mt-3 break-all text-xs text-muted-foreground">{url}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 <button
                   onClick={() => descargar(id, "qr-" + it.key)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium hover:bg-secondary"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold transition hover:bg-accent"
                 >
                   <Download className="h-3.5 w-3.5" /> Descargar PNG
                 </button>
                 <button
                   onClick={() => imprimir(id, it.titulo, url)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium hover:bg-secondary"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold transition hover:bg-accent"
                 >
                   <Printer className="h-3.5 w-3.5" /> Imprimir
                 </button>

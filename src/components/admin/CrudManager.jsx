@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, X, Inbox } from "lucide-react";
+import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
 import { toast } from "@/components/ui/use-toast";
 
 export default function CrudManager({
@@ -103,7 +104,7 @@ export default function CrudManager({
     const set = (v) => setForm((s) => ({ ...s, [f.key]: v }));
     if (f.type === "textarea") return <Textarea id={f.key} value={value} onChange={(e) => set(e.target.value)} rows={4} />;
     if (f.type === "boolean") return (
-      <button type="button" onClick={() => set(!value)} className={`relative h-6 w-11 rounded-full transition-colors ${value ? "bg-foreground" : "bg-border"}`}>
+      <button type="button" onClick={() => set(!value)} className={`relative h-6 w-11 rounded-full transition-colors ${value ? "bg-primary" : "bg-input"}`}>
         <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${value ? "translate-x-5" : "translate-x-0.5"}`} />
       </button>
     );
@@ -135,45 +136,43 @@ export default function CrudManager({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="font-heading font-bold text-2xl">{title}</h2>
-          {description && <p className="text-muted-foreground text-sm mt-1">{description}</p>}
-        </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4 mr-1" /> Nuevo</Button>
-      </div>
+      <PageHeader title={title} description={description} count={loading ? undefined : records.length}>
+        <Button onClick={openNew}><Plus className="h-4 w-4" /> Nuevo</Button>
+      </PageHeader>
 
       {loading ? (
-        <div className="py-12 text-center"><div className="w-7 h-7 border-4 border-border border-t-foreground rounded-full animate-spin mx-auto" /></div>
+        <Spinner />
       ) : records.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-border rounded-xl text-muted-foreground">{emptyMessage}</div>
+        <EmptyState icon={Inbox}>{emptyMessage}</EmptyState>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-secondary/50 border-b border-border">
+              <thead className="border-b border-border bg-secondary/60">
                 <tr>
-                  {listColumns.map((c) => <th key={c.key} className="text-left font-medium px-4 py-3 text-muted-foreground">{c.label}</th>)}
+                  {listColumns.map((c) => <th key={c.key} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{c.label}</th>)}
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {records.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-secondary/30">
+                  <tr key={rec.id} className="transition-colors hover:bg-accent/40">
                     {listColumns.map((c) => (
                       <td key={c.key} className="px-4 py-3 align-middle">
                         {c.render ? c.render(rec) : c.type === "image" && rec[c.key] ? (
-                          <img src={rec[c.key]} alt="" className="h-10 w-10 rounded object-cover" />
+                          <img src={rec[c.key]} alt="" className="h-11 w-11 rounded-lg object-cover ring-1 ring-border" />
                         ) : c.type === "boolean" ? (
-                          rec[c.key] ? "Sí" : "No"
+                          <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${rec[c.key] ? "bg-emerald-100 text-emerald-700" : "bg-secondary text-muted-foreground"}`}>
+                            {rec[c.key] ? "Sí" : "No"}
+                          </span>
                         ) : (
                           <span className="line-clamp-1">{String(rec[c.key] ?? "")}</span>
                         )}
                       </td>
                     ))}
                     <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <button onClick={() => openEdit(rec)} className="p-1.5 hover:bg-secondary rounded"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => remove(rec)} className="p-1.5 hover:bg-secondary rounded text-destructive"><Trash2 className="h-4 w-4" /></button>
+                      <button onClick={() => openEdit(rec)} aria-label="Editar" className="rounded-lg p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => remove(rec)} aria-label="Eliminar" className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
                     </td>
                   </tr>
                 ))}
