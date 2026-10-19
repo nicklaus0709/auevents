@@ -168,15 +168,17 @@ export default function Home() {
             <h2 className="text-3xl !text-white sm:text-4xl">{txt(evento, "historia_titulo")}</h2>
             {historia.intro.map((t, i) => <p key={i} className="mt-5 max-w-3xl leading-relaxed text-white/85">{t}</p>)}
             {historia.items.length > 0 && (
-              <ol className="relative mt-12 space-y-8 border-l-2 border-white/25 pl-8 sm:ml-4">
-                {historia.items.map((it) => (
-                  <li key={it.title} className="relative">
-                    <span className="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand ring-4 ring-white/20" />
-                    <h3 className="font-titulo text-2xl !text-white">{it.title}</h3>
-                    <div className="mt-2 max-w-3xl space-y-3 leading-relaxed text-white/80">{paragraphs(it.body).map((t, i) => <p key={i}>{t}</p>)}</div>
-                  </li>
-                ))}
-              </ol>
+              <div className="historia-scroll mt-10 max-h-[26rem] overflow-y-auto pr-5 sm:pr-8">
+                <ol className="relative space-y-8 border-l-2 border-white/25 pl-8 sm:ml-4">
+                  {historia.items.map((it) => (
+                    <li key={it.title} className="relative">
+                      <span className="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand ring-4 ring-white/20" />
+                      <h3 className="font-titulo text-2xl !text-white">{it.title}</h3>
+                      <div className="mt-2 max-w-3xl space-y-3 leading-relaxed text-white/80">{paragraphs(it.body).map((t, i) => <p key={i}>{t}</p>)}</div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             )}
           </div>
         </section>
