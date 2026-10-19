@@ -3,7 +3,7 @@ import React from "react";
 /** Encabezado de las páginas internas: imagen del evento oscurecida + título. */
 export default function PageHero({ eyebrow, title, subtitle, image }) {
   return (
-    <section className="relative isolate overflow-hidden bg-deep bg-festive text-white">
+    <section className="nieve relative isolate overflow-hidden bg-deep bg-festive text-white">
       {image && <img src={image} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30" />}
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/40 to-transparent" />
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">

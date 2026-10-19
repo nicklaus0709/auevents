@@ -52,7 +52,7 @@ export default function Eventos() {
                   {porFecha[fecha].map((a) => {
                     const p = partesDia(a.fecha);
                     return (
-                      <li key={a.id} className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200 transition hover:-translate-y-1 hover:shadow-xl">
+                      <li key={a.id} className="group overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
                         <div className="relative h-44 bg-deep">
                           {a.imagen_url && <img src={a.imagen_url} alt={a.nombre} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />}
                           {p && (

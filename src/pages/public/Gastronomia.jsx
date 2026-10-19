@@ -49,7 +49,7 @@ export default function Gastronomia() {
             {puestos.map((p) => {
               const prods = productos[p.id] || [];
               return (
-                <li key={p.id} className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200 transition hover:-translate-y-1 hover:shadow-xl">
+                <li key={p.id} className="flex flex-col overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
                   {p.imagen_url && <img src={p.imagen_url} alt={p.nombre} loading="lazy" className="h-40 w-full object-cover" />}
                   <div className="flex items-center gap-4 border-b border-stone-100 p-5">
                     <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand text-2xl font-extrabold text-white shadow-md shadow-brand/30" aria-label={`Puesto ${p.numero ?? ""}`}>

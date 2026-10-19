@@ -19,8 +19,8 @@ if ((existentes.items || []).length) {
     nosotros:
       "Desde hace más de una década, Navidad en Capioví se realiza sin interrupciones gracias al trabajo de vecinos y vecinas que donan voluntariamente su tiempo y sus conocimientos.\n\nEs una propuesta que refleja pertenencia, compromiso y respeto mutuo, unida por un mismo lema: «AMOR A SU PUEBLO».",
     activo: true,
-    color_primario: "#b91c1c",
-    color_acento: "#166534",
+    color_primario: "#c1121f",
+    color_acento: "#15803d",
     hero_image: img("hero.jpg"),
     logo_url: img("logo.jpg"),
   });

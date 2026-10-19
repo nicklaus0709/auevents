@@ -11,8 +11,8 @@ export default function PublicLayout() {
   const { evento } = useEvento();
   // Colores del evento como variables CSS "r g b" (brand = principal, brand2 = secundario)
   const theme = {
-    "--brand": hexToRgbTriplet(evento?.color_primario, "185 28 28"),
-    "--brand2": hexToRgbTriplet(evento?.color_acento, "22 101 52"),
+    "--brand": hexToRgbTriplet(evento?.color_primario, "193 18 31"),
+    "--brand2": hexToRgbTriplet(evento?.color_acento, "21 128 61"),
   };
 
   return (

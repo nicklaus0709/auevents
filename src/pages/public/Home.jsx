@@ -64,7 +64,7 @@ export default function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate flex h-[78vh] max-h-[52rem] min-h-[34rem] items-end overflow-hidden bg-deep bg-festive text-white">
+      <section className="nieve relative isolate flex h-[78vh] max-h-[52rem] min-h-[34rem] items-end overflow-hidden bg-deep bg-festive text-white">
         {evento.hero_image && <img src={evento.hero_image} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 to-transparent" />
@@ -108,7 +108,7 @@ export default function Home() {
             {destacados.map((a) => {
               const p = partesDia(a.fecha);
               return (
-                <li key={a.id} className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200 transition hover:-translate-y-1 hover:shadow-xl">
+                <li key={a.id} className="group overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
                   <div className="relative h-40 bg-deep">
                     {a.imagen_url && <img src={a.imagen_url} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />}
                     {p && (
@@ -190,7 +190,8 @@ export default function Home() {
 
       {/* CTA BONOS */}
       <section className="px-4 pb-16 sm:px-6">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand2 p-8 text-white shadow-2xl sm:p-14">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-brand bg-festive text-white shadow-2xl ring-4 ring-white">
+          <div className="p-8 sm:p-14">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/80">Bonos de colaboración</p>
           <h2 className="mt-2 max-w-xl text-3xl !text-white sm:text-4xl">Sumate: tu aporte hace posible el evento</h2>
           <p className="mt-3 max-w-xl text-white/90">Registrá tu bono y colaborá con la comunidad de Capioví.</p>
@@ -200,6 +201,8 @@ export default function Home() {
               <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="btn-ghost">Escribinos por WhatsApp</a>
             )}
           </div>
+          </div>
+          <div className="stripe-candy" aria-hidden="true" />
         </div>
       </section>
     </>

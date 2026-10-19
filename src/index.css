@@ -86,7 +86,7 @@
 }
 
 /* ---- Kit de estilo del sitio público (se activa con .public-site) ---- */
-.public-site { --brand: 185 28 28; --brand2: 22 101 52; }
+.public-site { --brand: 193 18 31; --brand2: 21 128 61; }
 
 @layer base {
   html { scroll-behavior: smooth; }
@@ -105,12 +105,33 @@
   .public-site .label { @apply mb-1.5 block text-sm font-semibold text-stone-700; }
   .public-site .section { @apply mx-auto w-full max-w-6xl px-4 py-16 sm:px-6; }
   .public-site .eyebrow { @apply mb-2 text-xs font-bold uppercase tracking-[0.2em] text-brand; }
-  .public-site .bg-deep { background-color: color-mix(in srgb, rgb(var(--brand2)) 38%, #0a0f0c); }
+  .public-site .bg-deep { background-color: color-mix(in srgb, rgb(var(--brand2)) 52%, #05150b); }
+  .public-site .eyebrow::before { content: "✦ "; }
+  /* Franja de bastón navideño (rojo y blanco) */
+  .public-site .stripe-candy { height: 8px; background: repeating-linear-gradient(-45deg, rgb(var(--brand)) 0 10px, #fff 10px 20px); }
+  /* Guirnalda de luces de colores */
+  .public-site .luces { height: 12px; background-image:
+    radial-gradient(circle at 10px 6px, #ef4444 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 30px 6px, #4ade80 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 50px 6px, #fde047 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 70px 6px, #fff 0 3.5px, transparent 4.5px);
+    background-size: 80px 12px; }
+  /* Nieve cayendo (detrás del contenido, sobre las imágenes) */
+  .public-site .nieve::after { content: ""; position: absolute; inset: 0; z-index: -5; pointer-events: none;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+      radial-gradient(3px 3px at 90px 80px, rgb(255 255 255 / .9), transparent),
+      radial-gradient(2px 2px at 150px 140px, #fff, transparent),
+      radial-gradient(2.5px 2.5px at 60px 170px, rgb(255 255 255 / .8), transparent),
+      radial-gradient(2px 2px at 180px 20px, rgb(255 255 255 / .9), transparent);
+    background-size: 200px 200px; animation: nevar 14s linear infinite; }
   .public-site .bg-festive { background-image: radial-gradient(circle at 20% 20%, rgb(255 255 255 / .12) 0 2px, transparent 3px), radial-gradient(circle at 70% 60%, rgb(255 255 255 / .1) 0 2px, transparent 3px); background-size: 46px 46px, 70px 70px; }
 }
 
+@keyframes nevar { to { background-position: 0 200px; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .public-site * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .public-site *, .public-site *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
 @layer utilities {

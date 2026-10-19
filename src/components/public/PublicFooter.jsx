@@ -13,9 +13,13 @@ export default function PublicFooter() {
 
   return (
     <footer className="bg-deep bg-festive text-white/80">
+      <div className="stripe-candy" aria-hidden="true" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
-          <img src="/navidad/escudo.png" alt="Escudo de Capioví" className="mb-4 h-16 w-16 rounded-full bg-white p-1" />
+          <div className="mb-4 flex items-center gap-3">
+            <img src="/navidad/escudo.png" alt="Escudo de Capioví" className="h-16 w-auto drop-shadow-lg" />
+            {evento?.logo_url && <img src={evento.logo_url} alt="" className="h-14 w-auto rounded-xl bg-white px-2 py-0.5" />}
+          </div>
           <p className="font-titulo text-2xl font-bold text-white">{evento?.nombre || "Municipalidad de Capioví"}</p>
           <p className="mt-3 text-sm leading-relaxed">Eventos de la comunidad de Capioví, Misiones. Cultura, gastronomía y tradición.</p>
           {social.length > 0 && (
