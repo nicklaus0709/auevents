@@ -85,6 +85,12 @@
     "gastronomia_subtitulo": {
       "type": "string"
     },
+    "alojamientos_titulo": {
+      "type": "string"
+    },
+    "alojamientos_subtitulo": {
+      "type": "string"
+    },
     "bonos_titulo": {
       "type": "string"
     },

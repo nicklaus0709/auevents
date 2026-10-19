@@ -33,6 +33,13 @@ export const TEXTOS = [
     ],
   },
   {
+    grupo: "Alojamientos",
+    campos: [
+      { key: "alojamientos_titulo", label: "Título", def: "Alojamientos y hotelería" },
+      { key: "alojamientos_subtitulo", label: "Subtítulo", def: "Dónde hospedarte para disfrutar del evento." },
+    ],
+  },
+  {
     grupo: "Bonos de colaboración",
     campos: [
       { key: "bonos_titulo", label: "Título", def: "Bonos de colaboración" },

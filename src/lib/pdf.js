@@ -1,5 +1,6 @@
 import { base44 } from "@/api/base44Client";
 import { esNavidad, formatDia } from "@/lib/formato";
+import { linkMapa, ordenarAlojamientos } from "@/lib/alojamientos";
 
 // A4 en mm
 const W = 210;
@@ -274,9 +275,69 @@ async function pdfGastronomia(evento) {
   return { doc, filename: `gastronomia-${slug(evento)}.pdf` };
 }
 
+async function pdfAlojamientos(evento) {
+  const { items } = await base44.entities.Alojamiento.filter({ evento_id: evento.id }, { limit: 300 });
+  const lista = ordenarAlojamientos(items || []);
+  const { doc, brand, estado, asegurar, cerrar } = await crearDocumento(evento, "Alojamientos y hotelería", "Dónde hospedarse");
+
+  if (!lista.length) {
+    doc.setTextColor(110, 110, 110);
+    doc.setFontSize(11);
+    doc.text("Todavía no hay alojamientos cargados.", L, estado.y);
+  }
+
+  for (const a of lista) {
+    const dir = a.direccion ? doc.splitTextToSize(limpiar(a.direccion), R - L - 12) : [];
+    const alto = 12 + (a.tipo ? 5 : 0) + dir.length * 4.8 + (a.telefono ? 5 : 0) + 9;
+    asegurar(alto);
+    const top = estado.y - 4;
+    doc.setDrawColor(222, 222, 222);
+    doc.roundedRect(L, top, R - L, alto, 3, 3, "S");
+    doc.setFillColor(...brand);
+    doc.rect(L, top + 3, 1.6, alto - 6, "F");
+
+    let y = top + 9;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12.5);
+    doc.setTextColor(25, 25, 25);
+    doc.text(limpiar(a.nombre), L + 7, y);
+    if (a.tipo) {
+      y += 5;
+      doc.setFontSize(8.5);
+      doc.setTextColor(...brand);
+      doc.text(limpiar(a.tipo).toUpperCase(), L + 7, y);
+    }
+    if (dir.length) {
+      y += 5.5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(70, 70, 70);
+      doc.text(dir, L + 7, y);
+      y += (dir.length - 1) * 4.8;
+    }
+    if (a.telefono) {
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(70, 70, 70);
+      doc.text(limpiar("Tel: " + a.telefono), L + 7, y);
+    }
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...brand);
+    doc.textWithLink("Ver en Google Maps >", L + 7, y, { url: linkMapa(a) });
+    estado.y = top + alto + 9;
+  }
+
+  cerrar();
+  return { doc, filename: `alojamientos-${slug(evento)}.pdf` };
+}
+
 export const TIPOS_PDF = {
   artistas: { titulo: "Grilla de artistas", generar: pdfArtistas, ruta: "/eventos" },
   gastronomia: { titulo: "Gastronomía", generar: pdfGastronomia, ruta: "/gastronomia" },
+  alojamientos: { titulo: "Alojamientos", generar: pdfAlojamientos, ruta: "/alojamientos" },
 };
 
 /** Arma el PDF actualizado del tipo pedido ("artistas" | "gastronomia"). Devuelve { doc, filename }. */

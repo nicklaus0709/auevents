@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Music, UtensilsCrossed, Images, Megaphone, Mail, Heart, ExternalLink, Settings, ArrowRight } from "lucide-react";
+import { Music, UtensilsCrossed, Images, Megaphone, BedDouble, Mail, Heart, ExternalLink, Settings, ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import PageHeader, { Panel, Spinner } from "@/components/admin/PageHeader";
@@ -24,14 +24,15 @@ export default function Resumen({ onNavigate }) {
           return [];
         }
       };
-      const [artistas, puestos, fotos, pubs, mensajes, bonos] = await Promise.all(
-        ["Artista", "PuestoGastronomico", "GaleriaFoto", "Publicidad", "MensajeContacto", "SolicitudBono"].map(list)
+      const [artistas, puestos, fotos, pubs, mensajes, bonos, alojamientos] = await Promise.all(
+        ["Artista", "PuestoGastronomico", "GaleriaFoto", "Publicidad", "MensajeContacto", "SolicitudBono", "Alojamiento"].map(list)
       );
       if (!mounted) return;
       setD({
         artistas: artistas.length,
         puestos: puestos.length,
         fotos: fotos.length,
+        alojamientos: alojamientos.length,
         pubs: pubs.filter((p) => p.activo).length,
         mensajesNuevos: mensajes.filter((m) => !m.estado || m.estado === "nuevo").length,
         bonosPendientes: bonos.filter((b) => !b.estado || b.estado === "pendiente").length,
@@ -46,6 +47,7 @@ export default function Resumen({ onNavigate }) {
   const tiles = d && [
     { id: "artistas", label: "Artistas / actividades", value: d.artistas, icon: Music, tone: "bg-emerald-50 text-emerald-700" },
     { id: "puestos", label: "Puestos gastronómicos", value: d.puestos, icon: UtensilsCrossed, tone: "bg-amber-50 text-amber-700" },
+    { id: "alojamientos", label: "Alojamientos", value: d.alojamientos, icon: BedDouble, tone: "bg-teal-50 text-teal-700" },
     { id: "galeria", label: "Fotos en la galería", value: d.fotos, icon: Images, tone: "bg-sky-50 text-sky-700" },
     { id: "publicidades", label: "Publicidades activas", value: d.pubs, icon: Megaphone, tone: "bg-violet-50 text-violet-700" },
     { id: "mensajes", label: "Mensajes nuevos", value: d.mensajesNuevos, icon: Mail, tone: "bg-rose-50 text-rose-700", alert: d.mensajesNuevos > 0 },

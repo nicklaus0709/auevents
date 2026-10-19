@@ -9,6 +9,7 @@ import PageHeader from "@/components/admin/PageHeader";
 const ITEMS = [
   { key: "artistas", titulo: "Grilla de artistas", detalle: "PDF ordenado por fecha y horario" },
   { key: "gastronomia", titulo: "Gastronomía", detalle: "PDF ordenado por número de puesto" },
+  { key: "alojamientos", titulo: "Alojamientos", detalle: "PDF con dirección y link de Google Maps" },
 ];
 
 const botonCls = "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold transition hover:bg-accent disabled:opacity-60";
@@ -67,7 +68,7 @@ export default function QrManager() {
         title="Códigos QR"
         description="Códigos para imprimir o afichar. Al escanearlos, el celular descarga un PDF con la información cargada en ese momento: no hace falta volver a imprimirlos si cambiás los datos."
       />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {ITEMS.map((it) => {
           const url = `${urlBase}/pdf/${it.key}${queryEvento}`;
           const id = "qr-" + it.key;

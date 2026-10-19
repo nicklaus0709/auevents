@@ -10,10 +10,11 @@ import QrManager from "@/components/admin/QrManager";
 import Resumen from "@/components/admin/Resumen";
 import TextosSitio from "@/components/admin/TextosSitio";
 import { useAuth } from "@/lib/AuthContext";
+import { TIPOS_ALOJAMIENTO } from "@/lib/alojamientos";
 import { base44 } from "@/api/base44Client";
 import {
   Settings, Music, UtensilsCrossed, Package, Megaphone, Images,
-  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type
+  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type, BedDouble
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +59,26 @@ const SECCIONES = [
         { key: "numero", label: "N°" },
         { key: "nombre", label: "Nombre" },
         { key: "responsable", label: "Responsable" },
+      ]}
+    />
+  )},
+  { id: "alojamientos", grupo: "Contenido", label: "Alojamientos", icon: BedDouble, component: () => (
+    <CrudManager entityName="Alojamiento" title="Alojamientos" description="Hoteles, hosterías, cabañas y otros lugares donde hospedarse."
+      emptyMessage="Aún no hay alojamientos cargados."
+      fields={[
+        { key: "nombre", label: "Nombre del lugar", type: "text", required: true },
+        { key: "tipo", label: "Tipo", type: "select", options: TIPOS_ALOJAMIENTO },
+        { key: "direccion", label: "Dirección", type: "text" },
+        { key: "maps_url", label: "Link de Google Maps", type: "text" },
+        { key: "telefono", label: "Teléfono", type: "text" },
+        { key: "imagen_url", label: "Imagen", type: "image" },
+        { key: "orden", label: "Orden", type: "number", sort: true },
+      ]}
+      listColumns={[
+        { key: "imagen_url", label: "", type: "image" },
+        { key: "nombre", label: "Nombre" },
+        { key: "tipo", label: "Tipo" },
+        { key: "direccion", label: "Dirección" },
       ]}
     />
   )},

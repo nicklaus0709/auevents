@@ -38,6 +38,7 @@ export default function PublicFooter() {
             <li><Link to="/" className="hover:text-white">Inicio</Link></li>
             <li><Link to="/eventos" className="hover:text-white">Grilla de Eventos</Link></li>
             <li><Link to="/gastronomia" className="hover:text-white">Gastronomía</Link></li>
+            <li><Link to="/alojamientos" className="hover:text-white">Alojamientos</Link></li>
             {mostrarBonos(evento) && <li><Link to="/bonos" className="hover:text-white">Bonos de colaboración</Link></li>}
             <li><Link to="/contacto" className="hover:text-white">Contacto</Link></li>
           </ul>

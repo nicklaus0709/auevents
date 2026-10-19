@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatDia } from "@/lib/formato";
 import { txt } from "@/lib/textos";
+import { ordenarAlojamientos } from "@/lib/alojamientos";
 
 /** Responde con los datos publicados (grilla, puestos, bonos), sin servicios externos. */
 function reply(question, evento, c) {
@@ -21,6 +22,10 @@ function reply(question, evento, c) {
     return (found.length ? "Encontré estos puestos:\n" : "Estos son los puestos gastronómicos:\n") +
       list.map((p) => `• Puesto ${p.numero ?? "-"} · ${p.nombre}: ${prodsDe(p).slice(0, 4).map((pr) => pr.nombre).join(", ")}`).join("\n");
   }
+  if (has("alojamiento", "hotel", "hospedaje", "hostería", "hosteria", "cabaña", "cabana", "dormir", "quedarme", "hospedar", "camping")) {
+    if (!c.alojamientos.length) return "Todavía no se cargaron los alojamientos.";
+    return "Estos son los alojamientos:\n" + c.alojamientos.slice(0, 10).map((x) => `• ${x.nombre}${x.direccion ? ` - ${x.direccion}` : ""}`).join("\n") + '\nMirá el detalle y el mapa en la sección "Alojamientos".';
+  }
   if (has("bono", "colabor", "comprar", "pagar", "pago")) return 'Podés registrar tu bono de colaboración desde la sección "Bonos".';
   if (has("contacto", "whatsapp", "telefono", "teléfono", "municipalidad", "participar")) return "Escribinos desde la sección Contacto.";
   return "Puedo ayudarte con la programación, los puestos de comida y los bonos. ¿Qué querés saber?";
@@ -30,7 +35,7 @@ export default function ChatWidget() {
   const { evento } = useEvento();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [data, setData] = useState({ artistas: [], puestos: [], productos: [] });
+  const [data, setData] = useState({ artistas: [], puestos: [], productos: [], alojamientos: [] });
   const [msgs, setMsgs] = useState(() => [{ role: "bot", text: txt(evento, "chat_saludo") }]);
   const end = useRef(null);
 
@@ -40,12 +45,13 @@ export default function ChatWidget() {
     let mounted = true;
     (async () => {
       try {
-        const [a, p, pr] = await Promise.all([
+        const [a, p, pr, al] = await Promise.all([
           base44.entities.Artista.filter({ evento_id: evento.id }, { sort: "orden", limit: 100 }),
           base44.entities.PuestoGastronomico.filter({ evento_id: evento.id }, { sort: "numero", limit: 100 }),
           base44.entities.Producto.filter({ evento_id: evento.id }, { limit: 500 }),
+          base44.entities.Alojamiento.filter({ evento_id: evento.id }, { limit: 100 }).catch(() => ({ items: [] })),
         ]);
-        if (mounted) setData({ artistas: a.items || [], puestos: p.items || [], productos: pr.items || [] });
+        if (mounted) setData({ artistas: a.items || [], puestos: p.items || [], productos: pr.items || [], alojamientos: ordenarAlojamientos(al.items || []) });
       } catch (e) {
         // ignore
       }

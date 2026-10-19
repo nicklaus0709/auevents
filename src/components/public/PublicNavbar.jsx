@@ -8,6 +8,7 @@ const links = [
   { to: "/", label: "Inicio", end: true },
   { to: "/eventos", label: "Grilla de Eventos" },
   { to: "/gastronomia", label: "Gastronomía" },
+  { to: "/alojamientos", label: "Alojamientos" },
   { to: "/contacto", label: "Contacto" },
 ];
 
@@ -47,7 +48,7 @@ export default function PublicNavbar() {
           )}
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Principal">
+        <nav className="hidden items-center gap-1 xl:flex" aria-label="Principal">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -90,7 +91,7 @@ export default function PublicNavbar() {
         </nav>
 
         <button
-          className="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold lg:hidden"
+          className="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold xl:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen(!open)}
@@ -102,7 +103,7 @@ export default function PublicNavbar() {
       <div className="stripe-candy" aria-hidden="true" />
 
       {open && (
-        <nav id="mobile-nav" className="animate-fade-in flex flex-col gap-1 border-t border-white/10 px-4 pb-5 pt-3 lg:hidden" aria-label="Principal móvil">
+        <nav id="mobile-nav" className="animate-fade-in flex flex-col gap-1 border-t border-white/10 px-4 pb-5 pt-3 xl:hidden" aria-label="Principal móvil">
           {links.map((l) => (
             <Link key={l.to} to={l.to} className="rounded-xl px-4 py-3 text-base font-semibold hover:bg-white/10">{l.label}</Link>
           ))}
