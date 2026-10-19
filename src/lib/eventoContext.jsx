@@ -7,6 +7,7 @@ export function EventoProvider({ children }) {
   const [eventos, setEventos] = useState([]);
   const [eventoId, setEventoId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [necesitaSeleccion, setNecesitaSeleccion] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -16,6 +17,7 @@ export function EventoProvider({ children }) {
         if (!mounted) return;
         setEventos(items);
         const guardado = localStorage.getItem("capiovi_evento_id");
+        if (!guardado) setNecesitaSeleccion(true);
         const inicial = items.find((e) => e.id === guardado) || items.find((e) => e.activo) || items[0];
         if (inicial) setEventoId(inicial.id);
       } catch (e) {
@@ -32,10 +34,11 @@ export function EventoProvider({ children }) {
   const seleccionarEvento = (id) => {
     setEventoId(id);
     localStorage.setItem("capiovi_evento_id", id);
+    setNecesitaSeleccion(false);
   };
 
   return (
-    <EventoContext.Provider value={{ eventos, evento, eventoId, seleccionarEvento, loading }}>
+    <EventoContext.Provider value={{ eventos, evento, eventoId, seleccionarEvento, loading, necesitaSeleccion }}>
       {children}
     </EventoContext.Provider>
   );

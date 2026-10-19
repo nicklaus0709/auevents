@@ -6,10 +6,11 @@ import CrudManager from "@/components/admin/CrudManager";
 import ProductosManager from "@/components/admin/ProductosManager";
 import MensajesManager from "@/components/admin/MensajesManager";
 import BonosManager from "@/components/admin/BonosManager";
+import QrManager from "@/components/admin/QrManager";
 import { base44 } from "@/api/base44Client";
 import {
   Settings, Music, UtensilsCrossed, Package, Megaphone, Images,
-  Mail, Heart, LogOut, Menu, X, ChevronDown, ExternalLink, LayoutDashboard
+  Mail, Heart, LogOut, Menu, X, ChevronDown, ExternalLink, LayoutDashboard, QrCode
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -90,6 +91,7 @@ const SECCIONES = [
   )},
   { id: "mensajes", label: "Mensajes", icon: Mail, component: MensajesManager },
   { id: "bonos", label: "Bonos", icon: Heart, component: BonosManager },
+  { id: "qr", label: "Códigos QR", icon: QrCode, component: QrManager },
 ];
 
 export default function Admin() {

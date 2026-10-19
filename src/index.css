@@ -107,8 +107,8 @@
   .public-site .eyebrow { @apply mb-2 text-xs font-bold uppercase tracking-[0.2em] text-brand; }
   .public-site .bg-deep { background-color: color-mix(in srgb, rgb(var(--brand2)) 52%, #05150b); }
   .public-site .eyebrow::before { content: "✦ "; }
-  /* Franja de bastón navideño (rojo y blanco) */
-  .public-site .stripe-candy { height: 8px; background: repeating-linear-gradient(-45deg, rgb(var(--brand)) 0 10px, #fff 10px 20px); }
+  /* Franja de bastón navideño (rojo, verde y blanco) */
+  .public-site .stripe-candy { height: 8px; background: repeating-linear-gradient(-45deg, rgb(var(--brand)) 0 8px, #fff 8px 16px, rgb(var(--brand2)) 16px 24px, #fff 24px 32px); }
   /* Guirnalda de luces de colores */
   .public-site .luces { height: 12px; background-image:
     radial-gradient(circle at 10px 6px, #ef4444 0 3.5px, transparent 4.5px),
