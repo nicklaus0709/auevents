@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Upload, X, Inbox } from "lucide-react";
 import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
@@ -104,9 +105,7 @@ export default function CrudManager({
     const set = (v) => setForm((s) => ({ ...s, [f.key]: v }));
     if (f.type === "textarea") return <Textarea id={f.key} value={value} onChange={(e) => set(e.target.value)} rows={4} />;
     if (f.type === "boolean") return (
-      <button type="button" onClick={() => set(!value)} className={`relative h-6 w-11 rounded-full transition-colors ${value ? "bg-primary" : "bg-input"}`}>
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${value ? "translate-x-5" : "translate-x-0.5"}`} />
-      </button>
+      <Switch id={f.key} checked={!!value} onCheckedChange={set} />
     );
     if (f.type === "select") return (
       <select id={f.key} value={value} onChange={(e) => set(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">

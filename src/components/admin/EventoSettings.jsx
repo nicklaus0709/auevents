@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Upload, X, Plus, Check, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import PageHeader, { Panel, Spinner } from "@/components/admin/PageHeader";
@@ -105,9 +106,7 @@ export default function EventoSettings() {
           <p className="text-sm font-semibold">{label}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
         </div>
-        <button type="button" role="switch" aria-checked={on} onClick={() => setForm({ ...form, [k]: !on })} className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-input"}`}>
-          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? "translate-x-5" : "translate-x-0.5"}`} />
-        </button>
+        <Switch checked={on} onCheckedChange={(v) => setForm({ ...form, [k]: v })} aria-label={label} className="mt-0.5" />
       </div>
     );
   };

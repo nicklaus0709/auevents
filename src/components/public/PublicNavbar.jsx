@@ -99,7 +99,7 @@ export default function PublicNavbar() {
         </button>
       </div>
 
-      <div className="luces" aria-hidden="true" />
+      <div className="stripe-candy" aria-hidden="true" />
 
       {open && (
         <nav id="mobile-nav" className="animate-fade-in flex flex-col gap-1 border-t border-white/10 px-4 pb-5 pt-3 lg:hidden" aria-label="Principal móvil">

@@ -131,17 +131,10 @@ body.admin-site {
   .public-site .bg-deep { background-color: color-mix(in srgb, rgb(var(--brand2)) 52%, #05150b); }
   .public-site.navidad .eyebrow::before { content: "✦ "; }
   /* Decoración navideña: solo en el evento de Navidad (clase .navidad en el contenedor) */
-  .public-site .stripe-candy, .public-site .luces { display: none; }
-  .public-site.navidad .stripe-candy, .public-site.navidad .luces { display: block; }
+  .public-site .stripe-candy { display: none; }
+  .public-site.navidad .stripe-candy { display: block; }
   /* Franja de bastón navideño (rojo, verde y blanco) */
   .public-site .stripe-candy { height: 8px; background: repeating-linear-gradient(-45deg, rgb(var(--brand)) 0 8px, #fff 8px 16px, rgb(var(--brand2)) 16px 24px, #fff 24px 32px); }
-  /* Guirnalda de luces de colores */
-  .public-site .luces { height: 12px; background-image:
-    radial-gradient(circle at 10px 6px, #ef4444 0 3.5px, transparent 4.5px),
-    radial-gradient(circle at 30px 6px, #4ade80 0 3.5px, transparent 4.5px),
-    radial-gradient(circle at 50px 6px, #fde047 0 3.5px, transparent 4.5px),
-    radial-gradient(circle at 70px 6px, #fff 0 3.5px, transparent 4.5px);
-    background-size: 80px 12px; }
   /* Scroll de la línea de tiempo de la historia */
   .public-site .historia-scroll { scrollbar-width: thin; scrollbar-color: rgb(var(--brand)) transparent; }
   .public-site .historia-scroll::-webkit-scrollbar { width: 8px; }

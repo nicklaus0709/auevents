@@ -163,7 +163,7 @@ export default function Home() {
             <h2 className="text-3xl !text-white sm:text-4xl">{txt(evento, "historia_titulo")}</h2>
             {historia.intro.map((t, i) => <p key={i} className="mt-5 max-w-3xl leading-relaxed text-white/85">{t}</p>)}
             {historia.items.length > 0 && (
-              <div className="historia-scroll mt-10 max-h-[26rem] overflow-y-auto pr-5 sm:pr-8">
+              <div className="historia-scroll mt-10 max-h-[26rem] overflow-y-auto pl-4 pr-5 sm:pl-8 sm:pr-8">
                 <ol className="relative space-y-8">
                   <span aria-hidden="true" className="absolute bottom-0 left-[0.45rem] top-0 w-[3px] rounded-full bg-white/20" />
                   {historia.items.map((it) => (
