@@ -16,6 +16,10 @@ export function EventoProvider({ children }) {
         const { items } = await base44.entities.Evento.filter({}, { sort: "-activo", limit: 50 });
         if (!mounted) return;
         setEventos(items);
+        // Un link con ?evento=<slug o id> (ej: el de los códigos QR) entra directo a ese evento, sin pantalla de selección
+        const pedido = new URLSearchParams(window.location.search).get("evento");
+        const porLink = pedido && items.find((e) => e.id === pedido || e.slug === pedido);
+        if (porLink) localStorage.setItem("capiovi_evento_id", porLink.id);
         const guardado = localStorage.getItem("capiovi_evento_id");
         if (!guardado) setNecesitaSeleccion(true);
         const inicial = items.find((e) => e.id === guardado) || items.find((e) => e.activo) || items[0];

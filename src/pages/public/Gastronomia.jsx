@@ -24,7 +24,7 @@ export default function Gastronomia() {
           base44.entities.Producto.filter({ evento_id: evento.id }, { limit: 500 }),
         ]);
         if (!mounted) return;
-        setPuestos(p.items || []);
+        setPuestos([...(p.items || [])].sort((a, b) => (a.numero ?? Infinity) - (b.numero ?? Infinity)));
         const grouped = {};
         (prod.items || []).forEach((pr) => {
           (grouped[pr.puesto_id] ||= []).push(pr);

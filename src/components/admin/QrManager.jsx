@@ -1,15 +1,19 @@
 import React from "react";
+import { useEvento } from "@/lib/eventoContext";
 import { QRCodeCanvas } from "qrcode.react";
 import { Download, Printer } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 
 const ITEMS = [
-  { key: "artistas", titulo: "Grilla de artistas", path: "/eventos" },
-  { key: "gastronomia", titulo: "Gastronomía", path: "/gastronomia" },
+  { key: "artistas", titulo: "Grilla de artistas", detalle: "Ordenada por fecha y horario", path: "/eventos" },
+  { key: "gastronomia", titulo: "Gastronomía", detalle: "Ordenada por número de puesto", path: "/gastronomia" },
 ];
 
 export default function QrManager() {
+  const { evento } = useEvento();
   const urlBase = window.location.origin;
+  // El link lleva el evento, así el visitante entra directo a la grilla sin pantalla de selección
+  const queryEvento = evento ? `?evento=${encodeURIComponent(evento.slug || evento.id)}` : "";
 
   const descargar = (id, nombre) => {
     const canvas = document.getElementById(id);
@@ -42,11 +46,12 @@ export default function QrManager() {
       <PageHeader title="Códigos QR" description="Códigos para imprimir o afichar: al escanearlos, el visitante llega directo a la grilla de artistas o a la gastronomía." />
       <div className="grid gap-4 sm:grid-cols-2">
         {ITEMS.map((it) => {
-          const url = urlBase + it.path;
+          const url = urlBase + it.path + queryEvento;
           const id = "qr-" + it.key;
           return (
             <div key={it.key} className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
               <p className="font-heading text-lg font-semibold">{it.titulo}</p>
+              <p className="text-xs text-muted-foreground">{it.detalle}</p>
               <div className="mt-4 rounded-2xl border border-border bg-white p-4 shadow-inner">
                 <QRCodeCanvas id={id} value={url} size={180} fgColor="#0c1f14" bgColor="#ffffff" />
               </div>

@@ -35,6 +35,7 @@ export default function Eventos() {
     (porFecha[key] ||= []).push(a);
   });
   const fechas = Object.keys(porFecha).sort();
+  fechas.forEach((f) => porFecha[f].sort((a, b) => (a.hora_inicio || "99:99").localeCompare(b.hora_inicio || "99:99") || (a.orden ?? 0) - (b.orden ?? 0)));
 
   return (
     <>
