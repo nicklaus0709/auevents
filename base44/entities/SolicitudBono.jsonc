@@ -1,0 +1,58 @@
+{
+  "name": "SolicitudBono",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "nombre": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "telefono": {
+      "type": "string"
+    },
+    "monto": {
+      "type": "number"
+    },
+    "codigo": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "pendiente",
+        "pagado",
+        "verificado",
+        "anulado"
+      ],
+      "default": "pendiente"
+    }
+  },
+  "required": [
+    "evento_id",
+    "nombre",
+    "email",
+    "monto"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

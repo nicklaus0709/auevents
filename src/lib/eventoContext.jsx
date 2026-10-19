@@ -1,0 +1,48 @@
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+
+const EventoContext = createContext(null);
+
+export function EventoProvider({ children }) {
+  const [eventos, setEventos] = useState([]);
+  const [eventoId, setEventoId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { items } = await base44.entities.Evento.filter({}, { sort: "-activo", limit: 50 });
+        if (!mounted) return;
+        setEventos(items);
+        const guardado = localStorage.getItem("capiovi_evento_id");
+        const inicial = items.find((e) => e.id === guardado) || items.find((e) => e.activo) || items[0];
+        if (inicial) setEventoId(inicial.id);
+      } catch (e) {
+        // sitio público: visitantes anónimos pueden leer
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const evento = eventos.find((e) => e.id === eventoId) || null;
+
+  const seleccionarEvento = (id) => {
+    setEventoId(id);
+    localStorage.setItem("capiovi_evento_id", id);
+  };
+
+  return (
+    <EventoContext.Provider value={{ eventos, evento, eventoId, seleccionarEvento, loading }}>
+      {children}
+    </EventoContext.Provider>
+  );
+}
+
+export function useEvento() {
+  const ctx = useContext(EventoContext);
+  if (!ctx) throw new Error("useEvento debe usarse dentro de EventoProvider");
+  return ctx;
+}

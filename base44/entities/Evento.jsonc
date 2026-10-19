@@ -1,0 +1,70 @@
+{
+  "name": "Evento",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "historia": {
+      "type": "string"
+    },
+    "nosotros": {
+      "type": "string"
+    },
+    "activo": {
+      "type": "boolean",
+      "default": false
+    },
+    "color_primario": {
+      "type": "string"
+    },
+    "color_acento": {
+      "type": "string"
+    },
+    "instagram_url": {
+      "type": "string"
+    },
+    "facebook_url": {
+      "type": "string"
+    },
+    "whatsapp_url": {
+      "type": "string"
+    },
+    "mp_link": {
+      "type": "string"
+    },
+    "hero_image": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nombre"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

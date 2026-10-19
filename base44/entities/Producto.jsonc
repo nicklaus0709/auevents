@@ -1,0 +1,47 @@
+{
+  "name": "Producto",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "puesto_id": {
+      "type": "string"
+    },
+    "nombre": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "precio": {
+      "type": "number"
+    },
+    "imagen_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "evento_id",
+    "puesto_id",
+    "nombre"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

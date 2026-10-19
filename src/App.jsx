@@ -6,6 +6,20 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { EventoProvider } from '@/lib/eventoContext';
+import PublicLayout from '@/components/public/PublicLayout';
+import Home from '@/pages/public/Home';
+import Eventos from '@/pages/public/Eventos';
+import Gastronomia from '@/pages/public/Gastronomia';
+import Contacto from '@/pages/public/Contacto';
+import Bonos from '@/pages/public/Bonos';
+import Admin from '@/pages/admin/Admin';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import { Navigate } from 'react-router-dom';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -34,7 +48,23 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
+      <Route element={<EventoProvider><PublicLayout /></EventoProvider>}>
+        <Route path="/" element={<Home />} />
+        <Route path="/eventos" element={<Eventos />} />
+        <Route path="/gastronomia" element={<Gastronomia />} />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/bonos" element={<Bonos />} />
+      </Route>
+
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/admin" element={<EventoProvider><Admin /></EventoProvider>} />
+      </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

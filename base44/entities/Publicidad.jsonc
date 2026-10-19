@@ -1,0 +1,51 @@
+{
+  "name": "Publicidad",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "comercio_nombre": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "imagen_url": {
+      "type": "string"
+    },
+    "link_url": {
+      "type": "string"
+    },
+    "activo": {
+      "type": "boolean",
+      "default": true
+    },
+    "orden": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "evento_id",
+    "comercio_nombre"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

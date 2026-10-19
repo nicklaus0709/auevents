@@ -1,0 +1,63 @@
+{
+  "name": "MensajeContacto",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "nombre": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "telefono": {
+      "type": "string"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "artista",
+        "puesto",
+        "otro"
+      ],
+      "default": "otro"
+    },
+    "mensaje": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "nuevo",
+        "leido",
+        "respondido"
+      ],
+      "default": "nuevo"
+    }
+  },
+  "required": [
+    "evento_id",
+    "nombre",
+    "email",
+    "mensaje"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

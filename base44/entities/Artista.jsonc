@@ -1,0 +1,60 @@
+{
+  "name": "Artista",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "nombre": {
+      "type": "string"
+    },
+    "genero": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "hora_inicio": {
+      "type": "string"
+    },
+    "hora_fin": {
+      "type": "string"
+    },
+    "escenario": {
+      "type": "string"
+    },
+    "imagen_url": {
+      "type": "string"
+    },
+    "orden": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "evento_id",
+    "nombre"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
