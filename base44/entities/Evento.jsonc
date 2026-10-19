@@ -17,6 +17,18 @@
     "nosotros": {
       "type": "string"
     },
+    "lema": {
+      "type": "string",
+      "description": "Lema del evento, ej: AMOR A SU PUEBLO"
+    },
+    "periodo": {
+      "type": "string",
+      "description": "Cuándo se realiza, en texto libre"
+    },
+    "lugar": {
+      "type": "string",
+      "description": "Dónde se realiza"
+    },
     "activo": {
       "type": "boolean",
       "default": false

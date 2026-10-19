@@ -46,7 +46,7 @@ export default function Eventos() {
             {fechas.map((fecha) => (
               <div key={fecha}>
                 <h2 className="mb-5 border-b border-stone-200 pb-3 text-2xl capitalize">
-                  {fecha === "Sin fecha" ? "Sin fecha" : formatDia(fecha)}
+                  {fecha === "Sin fecha" ? "Durante toda la celebración" : formatDia(fecha)}
                 </h2>
                 <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {porFecha[fecha].map((a) => {

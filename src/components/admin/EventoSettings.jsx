@@ -130,6 +130,11 @@ export default function EventoSettings() {
           <div className="space-y-1.5"><Label>Identificador (slug)</Label><Input value={form.slug || ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
         </div>
         <div className="space-y-1.5"><Label>Descripción corta</Label><Textarea value={form.descripcion || ""} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={2} /></div>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div className="space-y-1.5"><Label>Lema</Label><Input value={form.lema || ""} onChange={(e) => setForm({ ...form, lema: e.target.value })} placeholder="Ej: AMOR A SU PUEBLO" /></div>
+          <div className="space-y-1.5"><Label>Cuándo (texto libre)</Label><Input value={form.periodo || ""} onChange={(e) => setForm({ ...form, periodo: e.target.value })} placeholder="Ej: Del 29/11 a fines de enero" /></div>
+          <div className="space-y-1.5"><Label>Dónde</Label><Input value={form.lugar || ""} onChange={(e) => setForm({ ...form, lugar: e.target.value })} placeholder="Ej: Plaza central" /></div>
+        </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-1.5"><Label>Nosotros</Label><Textarea value={form.nosotros || ""} onChange={(e) => setForm({ ...form, nosotros: e.target.value })} rows={4} /></div>
           <div className="space-y-1.5"><Label>Historia</Label><Textarea value={form.historia || ""} onChange={(e) => setForm({ ...form, historia: e.target.value })} rows={4} /></div>

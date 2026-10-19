@@ -15,6 +15,7 @@ export default function PublicFooter() {
     <footer className="bg-deep bg-festive text-white/80">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
+          <img src="/navidad/escudo.png" alt="Escudo de Capioví" className="mb-4 h-16 w-16 rounded-full bg-white p-1" />
           <p className="font-titulo text-2xl font-bold text-white">{evento?.nombre || "Municipalidad de Capioví"}</p>
           <p className="mt-3 text-sm leading-relaxed">Eventos de la comunidad de Capioví, Misiones. Cultura, gastronomía y tradición.</p>
           {social.length > 0 && (
@@ -44,6 +45,12 @@ export default function PublicFooter() {
             {evento?.whatsapp_url && (
               <li>💬 <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="hover:text-white">WhatsApp de la Municipalidad</a></li>
             )}
+          </ul>
+          <ul className="mt-5 space-y-2 text-sm">
+            <li><a href="https://capiovi.misiones.gov.ar" target="_blank" rel="noopener noreferrer" className="hover:text-white">Municipalidad de Capioví</a></li>
+            <li><a href="https://capiovi.misiones.gov.ar/turismo" target="_blank" rel="noopener noreferrer" className="hover:text-white">Turismo</a></li>
+            <li><a href="https://capiovi.misiones.gov.ar/salto-capiovi" target="_blank" rel="noopener noreferrer" className="hover:text-white">Salto Capioví</a></li>
+            <li><a href="https://capiovi.misiones.gov.ar/museo-de-la-inmigracion-alemana" target="_blank" rel="noopener noreferrer" className="hover:text-white">Museo de la Inmigración Alemana</a></li>
           </ul>
           <Link to="/admin" className="mt-5 inline-block text-sm font-semibold text-white underline-offset-4 hover:underline">Acceso administradores →</Link>
         </div>

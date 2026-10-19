@@ -47,15 +47,16 @@ export default function Home() {
   const hoy = new Date().toISOString().slice(0, 10);
   const conFecha = artistas.filter((a) => a.fecha).sort((a, b) => (a.fecha + (a.hora_inicio || "")).localeCompare(b.fecha + (b.hora_inicio || "")));
   const proximas = conFecha.filter((a) => a.fecha >= hoy);
-  const destacados = (proximas.length ? proximas : conFecha).slice(0, 3);
+  const destacados = (proximas.length ? proximas : artistas).slice(0, 3);
 
   const fechas = [...new Set(conFecha.map((a) => a.fecha))];
-  const cuando = fechas.length
+  const cuando = evento.periodo || (fechas.length
     ? fechas.length === 1
       ? formatFechaLarga(fechas[0])
       : `${formatFechaLarga(fechas[0])} — ${formatFechaLarga(fechas[fechas.length - 1])}`
-    : null;
+    : null);
   const escenarios = [...new Set(artistas.map((a) => a.escenario).filter(Boolean))];
+  const donde = evento.lugar || escenarios.join(" · ");
 
   const historia = evento.historia ? parseHistory(evento.historia) : null;
   const nosotros = paragraphs(evento.nosotros);
@@ -88,7 +89,7 @@ export default function Home() {
       <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:px-6">
         <dl className="grid gap-px overflow-hidden rounded-2xl bg-stone-200 shadow-xl sm:grid-cols-3">
           {cuando && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Cuándo</dt><dd className="mt-1 font-bold text-stone-900">{cuando}</dd></div>}
-          {escenarios.length > 0 && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Dónde</dt><dd className="mt-1 font-bold text-stone-900">{escenarios.join(" · ")}</dd></div>}
+          {donde && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Dónde</dt><dd className="mt-1 font-bold text-stone-900">{donde}</dd></div>}
           <div className="bg-white p-5">
             <dt className="text-xs font-bold uppercase tracking-widest text-brand">Más info</dt>
             <dd className="mt-1 font-bold text-stone-900"><Link to="/contacto" className="underline">Escribinos</Link></dd>
@@ -140,6 +141,7 @@ export default function Home() {
               <p className="eyebrow">Nosotros</p>
               <h2 className="text-3xl sm:text-4xl">Una celebración de toda la comunidad</h2>
               <div className="mt-5 space-y-4 leading-relaxed text-stone-700">{nosotros.map((t, i) => <p key={i}>{t}</p>)}</div>
+              {evento.lema && <p className="mt-6 border-l-4 border-brand pl-4 font-titulo text-2xl font-bold italic text-stone-900">“{evento.lema}”</p>}
               <div className="mt-6 flex flex-wrap gap-3">
                 {hayPuestos && <Link to="/gastronomia" className="btn">Ver gastronomía</Link>}
                 <Link to="/contacto" className="btn-secondary">Quiero participar</Link>
