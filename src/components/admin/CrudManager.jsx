@@ -28,6 +28,7 @@ export default function CrudManager({
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [subiendo, setSubiendo] = useState(null);
 
   const blank = () => {
     const b = {};
@@ -57,12 +58,15 @@ export default function CrudManager({
   const handleUpload = async (e, fieldKey) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setSubiendo(fieldKey);
     try {
       const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
       setForm((f) => ({ ...f, [fieldKey]: file_url }));
-      toast({ title: "Imagen cargada" });
+      toast({ title: file.type.startsWith("video/") ? "Video cargado" : "Imagen cargada" });
     } catch (err) {
-      toast({ title: "Error al subir imagen", variant: "destructive" });
+      toast({ title: "Error al subir el archivo", variant: "destructive" });
+    } finally {
+      setSubiendo(null);
     }
   };
 
@@ -111,6 +115,19 @@ export default function CrudManager({
       <select id={f.key} value={value} onChange={(e) => set(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
         {(f.options || []).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
+    );
+    if (f.type === "video") return (
+      <div className="space-y-2">
+        <Input value={value} onChange={(e) => set(e.target.value)} placeholder="Pegá un enlace (YouTube, Vimeo, Facebook) o subí un archivo" />
+        {value && !/youtu|vimeo|facebook|fb\.watch/i.test(value) && (
+          <video src={value} controls preload="metadata" className="h-36 rounded-md border border-border bg-black" />
+        )}
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm transition-colors hover:bg-secondary">
+          <Upload className="h-4 w-4" /> {subiendo === f.key ? "Subiendo…" : "Subir archivo de video"}
+          <input type="file" accept="video/*" className="hidden" disabled={!!subiendo} onChange={(e) => handleUpload(e, f.key)} />
+        </label>
+        <p className="text-xs text-muted-foreground">Si el video es muy pesado, subilo a YouTube y pegá el enlace.</p>
+      </div>
     );
     if (f.type === "image") return (
       <div className="space-y-2">

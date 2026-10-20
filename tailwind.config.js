@@ -74,6 +74,7 @@ module.exports = {
   			titulo: ['Georgia', 'Cambria', 'Times New Roman', 'serif']
   		},
   		keyframes: {
+  			flotar: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
   			fadeUp: { from: { opacity: '0', transform: 'translateY(16px)' }, to: { opacity: '1', transform: 'none' } },
   			fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
   			'accordion-down': {
@@ -94,6 +95,7 @@ module.exports = {
   			}
   		},
   		animation: {
+  			flotar: 'flotar 3.5s ease-in-out infinite',
   			'fade-up': 'fadeUp .7s ease both',
   			'fade-in': 'fadeIn .5s ease both',
   			'accordion-down': 'accordion-down 0.2s ease-out',

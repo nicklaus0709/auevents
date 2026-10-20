@@ -118,6 +118,34 @@
     "chat_saludo": {
       "type": "string"
     },
+    "ambiente_activo": {
+      "type": "boolean",
+      "default": true
+    },
+    "ambiente_logo": {
+      "type": "string"
+    },
+    "ambiente_titulo": {
+      "type": "string"
+    },
+    "ambiente_subtitulo": {
+      "type": "string"
+    },
+    "ambiente_intro": {
+      "type": "string"
+    },
+    "ambiente_proceso_titulo": {
+      "type": "string"
+    },
+    "ambiente_proceso_intro": {
+      "type": "string"
+    },
+    "ambiente_galeria_titulo": {
+      "type": "string"
+    },
+    "ambiente_videos_titulo": {
+      "type": "string"
+    },
     "activo": {
       "type": "boolean",
       "default": false

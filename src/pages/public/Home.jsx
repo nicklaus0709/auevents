@@ -6,6 +6,7 @@ import { formatFechaLarga, parseHistory, partesDia } from "@/lib/formato";
 import { txt, mostrarBonos } from "@/lib/textos";
 import Gallery from "@/components/public/Gallery";
 import Spinner from "@/components/public/Spinner";
+import AmbienteFlotante from "@/components/public/AmbienteFlotante";
 
 const paragraphs = (text) => (text || "").split(/\n\s*\n/).filter(Boolean);
 
@@ -208,6 +209,8 @@ export default function Home() {
         </div>
       </section>
       )}
+
+      <AmbienteFlotante evento={evento} />
     </>
   );
 }

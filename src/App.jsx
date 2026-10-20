@@ -15,6 +15,7 @@ import Gastronomia from '@/pages/public/Gastronomia';
 import Contacto from '@/pages/public/Contacto';
 import Bonos from '@/pages/public/Bonos';
 import Alojamientos from '@/pages/public/Alojamientos';
+import Ambiente from '@/pages/public/Ambiente';
 import DescargaPdf from '@/pages/public/DescargaPdf';
 import Admin from '@/pages/admin/Admin';
 import Login from '@/pages/Login';
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/gastronomia" element={<Gastronomia />} />
         <Route path="/alojamientos" element={<Alojamientos />} />
+        <Route path="/medio-ambiente" element={<Ambiente />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/bonos" element={<Bonos />} />
       </Route>

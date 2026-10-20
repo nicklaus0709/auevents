@@ -1,0 +1,45 @@
+{
+  "name": "AmbienteVideo",
+  "type": "object",
+  "properties": {
+    "evento_id": {
+      "type": "string"
+    },
+    "titulo": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Enlace (YouTube, Vimeo, Facebook) o archivo de video subido"
+    },
+    "orden": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "evento_id",
+    "titulo"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

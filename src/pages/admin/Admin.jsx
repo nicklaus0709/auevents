@@ -10,12 +10,13 @@ import QrManager from "@/components/admin/QrManager";
 import Resumen from "@/components/admin/Resumen";
 import TextosSitio from "@/components/admin/TextosSitio";
 import UsuariosManager from "@/components/admin/UsuariosManager";
+import AmbienteSettings from "@/components/admin/AmbienteSettings";
 import { useAuth } from "@/lib/AuthContext";
 import { TIPOS_ALOJAMIENTO } from "@/lib/alojamientos";
 import { base44 } from "@/api/base44Client";
 import {
   Settings, Music, UtensilsCrossed, Package, Megaphone, Images,
-  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type, BedDouble, Users, ShieldAlert
+  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type, BedDouble, Users, ShieldAlert, Leaf, ListOrdered, Video
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -113,6 +114,53 @@ const SECCIONES = [
       listColumns={[
         { key: "imagen_url", label: "", type: "image" },
         { key: "titulo", label: "Título" },
+      ]}
+    />
+  )},
+  { id: "ambiente", grupo: "Medio ambiente", label: "Ajustes y textos", icon: Leaf, component: AmbienteSettings },
+  { id: "amb-pasos", grupo: "Medio ambiente", label: "Proceso de reciclaje", icon: ListOrdered, component: () => (
+    <CrudManager entityName="PasoReciclaje" title="Proceso de reciclaje" description="Los pasos que explican cómo se recicla el plástico y se transforma en adornos. Se muestran en el orden indicado."
+      emptyMessage="Aún no hay pasos cargados."
+      fields={[
+        { key: "titulo", label: "Título del paso", type: "text", required: true },
+        { key: "descripcion", label: "Descripción", type: "textarea" },
+        { key: "imagen_url", label: "Imagen", type: "image" },
+        { key: "orden", label: "Orden", type: "number", sort: true },
+      ]}
+      listColumns={[
+        { key: "imagen_url", label: "", type: "image" },
+        { key: "orden", label: "N°" },
+        { key: "titulo", label: "Paso" },
+      ]}
+    />
+  )},
+  { id: "amb-galeria", grupo: "Medio ambiente", label: "Galería ambiental", icon: Images, component: () => (
+    <CrudManager entityName="AmbienteFoto" title="Galería ambiental" description="Fotos del arte hecho con plástico reciclado."
+      emptyMessage="Aún no hay fotos cargadas."
+      fields={[
+        { key: "titulo", label: "Título", type: "text", required: true },
+        { key: "descripcion", label: "Descripción", type: "text" },
+        { key: "imagen_url", label: "Imagen", type: "image", required: true },
+        { key: "orden", label: "Orden", type: "number", sort: true },
+      ]}
+      listColumns={[
+        { key: "imagen_url", label: "", type: "image" },
+        { key: "titulo", label: "Título" },
+      ]}
+    />
+  )},
+  { id: "amb-videos", grupo: "Medio ambiente", label: "Videos del proceso", icon: Video, component: () => (
+    <CrudManager entityName="AmbienteVideo" title="Videos del proceso" description="Videos que muestran cómo se recicla y se arma cada adorno. Podés subir un archivo o pegar un enlace de YouTube, Vimeo o Facebook."
+      emptyMessage="Aún no hay videos cargados."
+      fields={[
+        { key: "titulo", label: "Título", type: "text", required: true },
+        { key: "descripcion", label: "Descripción", type: "textarea" },
+        { key: "video_url", label: "Video", type: "video", required: true },
+        { key: "orden", label: "Orden", type: "number", sort: true },
+      ]}
+      listColumns={[
+        { key: "titulo", label: "Título" },
+        { key: "video_url", label: "Video", render: (r) => <span className="line-clamp-1 text-muted-foreground">{r.video_url}</span> },
       ]}
     />
   )},

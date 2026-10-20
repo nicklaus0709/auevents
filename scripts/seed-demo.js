@@ -91,3 +91,39 @@ if ((existentes.items || []).length) {
 
   console.log(`Evento creado (${evento_id}): ${actividades.length} actividades, ${galeria.length} fotos.`);
 }
+
+// ---- Medio ambiente: pasos del proceso y galería de ejemplo (editables desde /admin) ----
+{
+  const ev = ((await base44.entities.Evento.filter({ slug: "navidad-capiovi" }, { limit: 1 })).items || [])[0];
+  if (ev) {
+    const img = (n) => `/navidad/${n}`;
+    const hayPasos = ((await base44.entities.PasoReciclaje.filter({ evento_id: ev.id }, { limit: 1 })).items || []).length;
+    if (!hayPasos) {
+      const pasos = [
+        ["Recolección", "Vecinos, escuelas, instituciones y comercios juntan botellas plásticas durante todo el año."],
+        ["Limpieza y clasificación", "Las botellas se lavan y se separan por tamaño y color para poder usarlas."],
+        ["Corte y armado de piezas", "Cada botella se corta y se une a otras para formar flores, hojas, velas y figuras."],
+        ["Montaje", "Los adornos se arman sobre estructuras y se instalan en la plaza y en las calles del pueblo."],
+      ];
+      for (const [i, [titulo, descripcion]] of pasos.entries()) {
+        await base44.entities.PasoReciclaje.create({ evento_id: ev.id, titulo, descripcion, orden: i + 1 });
+      }
+      console.log(`Medio ambiente: ${pasos.length} pasos de ejemplo cargados.`);
+    }
+    const hayFotos = ((await base44.entities.AmbienteFoto.filter({ evento_id: ev.id }, { limit: 1 })).items || []).length;
+    if (!hayFotos) {
+      const fotos = [
+        ["Papá Noel y su árbol", "papa-noel.jpg"],
+        ["Árbol de las casitas", "arbol-casitas.jpg"],
+        ["Tren navideño", "tren.jpg"],
+        ["Velas gigantes en la avenida", "calle-dia.jpg"],
+        ["Árbol de regalos y dulces", "arbol-regalos.jpg"],
+        ["Ángeles de la plaza", "angeles.jpg"],
+      ];
+      for (const [i, [titulo, foto]] of fotos.entries()) {
+        await base44.entities.AmbienteFoto.create({ evento_id: ev.id, titulo, imagen_url: img(foto), orden: i + 1 });
+      }
+      console.log(`Medio ambiente: ${fotos.length} fotos de ejemplo cargadas.`);
+    }
+  }
+}

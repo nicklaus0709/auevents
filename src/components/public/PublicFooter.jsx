@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useEvento } from "@/lib/eventoContext";
 import PoweredBy from "@/components/public/PoweredBy";
 import { txt, parseLinks, mostrarBonos } from "@/lib/textos";
+import { ambienteActivo } from "@/lib/ambiente";
 
 export default function PublicFooter() {
   const { evento } = useEvento();
@@ -39,6 +40,7 @@ export default function PublicFooter() {
             <li><Link to="/eventos" className="hover:text-white">Grilla de Eventos</Link></li>
             <li><Link to="/gastronomia" className="hover:text-white">Gastronomía</Link></li>
             <li><Link to="/alojamientos" className="hover:text-white">Alojamientos</Link></li>
+            {ambienteActivo(evento) && <li><Link to="/medio-ambiente" className="hover:text-white">Medio ambiente</Link></li>}
             {mostrarBonos(evento) && <li><Link to="/bonos" className="hover:text-white">Bonos de colaboración</Link></li>}
             <li><Link to="/contacto" className="hover:text-white">Contacto</Link></li>
           </ul>
