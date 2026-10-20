@@ -9,12 +9,13 @@ import BonosManager from "@/components/admin/BonosManager";
 import QrManager from "@/components/admin/QrManager";
 import Resumen from "@/components/admin/Resumen";
 import TextosSitio from "@/components/admin/TextosSitio";
+import UsuariosManager from "@/components/admin/UsuariosManager";
 import { useAuth } from "@/lib/AuthContext";
 import { TIPOS_ALOJAMIENTO } from "@/lib/alojamientos";
 import { base44 } from "@/api/base44Client";
 import {
   Settings, Music, UtensilsCrossed, Package, Megaphone, Images,
-  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type, BedDouble
+  Mail, Heart, LogOut, Menu, X, ChevronsUpDown, ExternalLink, LayoutDashboard, QrCode, Check, Type, BedDouble, Users, ShieldAlert
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -117,6 +118,7 @@ const SECCIONES = [
   )},
   { id: "mensajes", grupo: "Gestión", label: "Mensajes", icon: Mail, component: MensajesManager },
   { id: "bonos", grupo: "Gestión", label: "Bonos", icon: Heart, component: BonosManager },
+  { id: "usuarios", grupo: "Gestión", label: "Usuarios", icon: Users, component: UsuariosManager },
   { id: "qr", grupo: "Gestión", label: "Códigos QR", icon: QrCode, component: QrManager },
 ];
 
@@ -138,6 +140,25 @@ export default function Admin() {
     await base44.auth.logout();
     navigate("/");
   };
+
+  // Solo los administradores entran al panel (los datos ya están protegidos por rol; esto evita mostrar una pantalla vacía)
+  if (user && user.role !== "admin") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-lg">
+          <ShieldAlert className="mx-auto mb-4 h-10 w-10 text-destructive" />
+          <h1 className="font-heading text-2xl font-bold">No tenés permisos para entrar</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Tu cuenta ({user.email}) no es de administrador. Pedile a quien administra el sitio que te dé acceso con ese email.
+          </p>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Link to="/" className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">Ir al sitio</Link>
+            <button onClick={logout} className="inline-flex items-center justify-center rounded-full border border-border px-5 py-2 text-sm font-semibold hover:bg-secondary">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const actual = SECCIONES.find((s) => s.id === seccion) || SECCIONES[0];
   const ActiveComponent = actual.component;
