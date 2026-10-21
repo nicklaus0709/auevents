@@ -47,7 +47,16 @@ export default function UsuariosManager() {
     }
     setEnviando(true);
     try {
-      await base44.auth.inviteUser(correo, rol);
+      // El endpoint de la app (users) valida la sesión del admin logueado; el de auth es el de la plataforma
+      try {
+        await base44.users.inviteUser(correo, rol);
+      } catch (primero) {
+        try {
+          await base44.auth.inviteUser(correo, rol);
+        } catch {
+          throw primero;
+        }
+      }
       toast({ title: "Invitación enviada", description: `${correo} recibirá un correo para entrar como ${rolLabel(rol).toLowerCase()}.` });
       setEmail("");
       cargar();
