@@ -66,7 +66,7 @@ export default function PublicFooter() {
         </div>
       </div>
       <div className="space-y-4 border-t border-white/10 px-4 py-6 text-center">
-        <p className="text-xs text-white/60">© {year} Municipalidad de Capioví{evento?.nombre ? ` · ${evento.nombre}` : ""}. Todos los derechos reservados.</p>
+        <p className="text-xs text-white/60">© {year} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados.</p>
         <PoweredBy />
       </div>
     </footer>

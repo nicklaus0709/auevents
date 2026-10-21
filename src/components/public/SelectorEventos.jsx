@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
+import PoweredBy from "@/components/public/PoweredBy";
 
 /** Pantalla para elegir el evento antes de entrar al sitio público. Neutra: sin decoración de ningún evento. */
 export default function SelectorEventos({ eventos, onSeleccionar }) {
@@ -61,6 +62,13 @@ export default function SelectorEventos({ eventos, onSeleccionar }) {
           ))}
         </div>
       </main>
+
+      <footer className="border-t border-white/10 px-4 py-6 text-center">
+        <div className="space-y-4">
+          <p className="text-xs text-white/60">© {new Date().getFullYear()} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados.</p>
+          <PoweredBy />
+        </div>
+      </footer>
     </div>
   );
 }
