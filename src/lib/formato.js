@@ -9,6 +9,19 @@ export function hexToRgbTriplet(hex, fallback) {
 }
 
 /** "2025-12-20" (fecha sin hora) -> Date al mediodía local, sin corrimiento de día por zona horaria. */
+/** "r g b" de un texto que se lee bien sobre ese color: blanco u oscuro según la luminancia (WCAG). */
+export function colorSobre(hex) {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex || "");
+  if (!m) return "255 255 255";
+  const n = parseInt(m[1], 16);
+  const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  const lum = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+  return lum > 0.4 ? "28 25 23" : "255 255 255";
+}
+
 export function parseFecha(fecha) {
   if (!fecha) return null;
   const d = /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? new Date(`${fecha}T12:00:00`) : new Date(fecha);

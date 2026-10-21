@@ -1,25 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-/** Galería tipo mosaico con visor a pantalla completa (teclado: ← → Esc). */
+/** Galería tipo mosaico con visor a pantalla completa (Radix Dialog: atrapa el foco y lo devuelve a la miniatura; teclado: ← → Esc). */
 export default function Gallery({ images, alt }) {
   const [current, setCurrent] = useState(null);
   const close = useCallback(() => setCurrent(null), []);
   const move = useCallback((d) => setCurrent((c) => (c === null ? c : (c + d + images.length) % images.length)), [images.length]);
-
-  useEffect(() => {
-    if (current === null) return;
-    const onKey = (e) => {
-      if (e.key === "Escape") close();
-      if (e.key === "ArrowRight") move(1);
-      if (e.key === "ArrowLeft") move(-1);
-    };
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [current, close, move]);
 
   const img = current !== null ? images[current] : null;
 
@@ -40,21 +27,31 @@ export default function Gallery({ images, alt }) {
         ))}
       </ul>
 
-      {img && (
-        <div role="dialog" aria-modal="true" aria-label="Visor de fotos" className="animate-fade-in fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4" onClick={close}>
-          <button onClick={close} aria-label="Cerrar" className="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white hover:bg-white/20">✕ Cerrar</button>
+      <Dialog open={current !== null} onOpenChange={(o) => !o && close()}>
+        <DialogContent
+          aria-describedby={undefined}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowRight") move(1);
+            if (e.key === "ArrowLeft") move(-1);
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) close(); }}
+          className="left-0 top-0 flex h-full max-w-none translate-x-0 translate-y-0 items-center justify-center border-0 bg-black/90 p-4 text-white data-[state=closed]:animate-none data-[state=open]:animate-none sm:rounded-none"
+        >
+          <DialogTitle className="sr-only">{img?.titulo || alt}</DialogTitle>
           {images.length > 1 && (
             <>
-              <button onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Anterior" className="absolute left-3 rounded-full bg-white/10 px-4 py-3 text-2xl text-white hover:bg-white/20">‹</button>
-              <button onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Siguiente" className="absolute right-3 rounded-full bg-white/10 px-4 py-3 text-2xl text-white hover:bg-white/20">›</button>
+              <button onClick={() => move(-1)} aria-label="Foto anterior" className="absolute left-3 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"><ChevronLeft className="h-6 w-6" aria-hidden="true" /></button>
+              <button onClick={() => move(1)} aria-label="Foto siguiente" className="absolute right-3 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"><ChevronRight className="h-6 w-6" aria-hidden="true" /></button>
             </>
           )}
-          <figure className="max-h-full max-w-5xl text-center" onClick={(e) => e.stopPropagation()}>
-            <img src={img.imagen_url} alt={img.titulo || alt} className="mx-auto max-h-[80vh] rounded-xl object-contain" />
-            {img.titulo && <figcaption className="mt-3 text-sm font-medium text-white">{img.titulo}</figcaption>}
-          </figure>
-        </div>
-      )}
+          {img && (
+            <figure className="max-h-full max-w-5xl text-center">
+              <img src={img.imagen_url} alt={img.titulo || alt} className="mx-auto max-h-[80vh] rounded-xl object-contain" />
+              {img.titulo && <figcaption className="mt-3 text-sm font-medium text-white">{img.titulo}</figcaption>}
+            </figure>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

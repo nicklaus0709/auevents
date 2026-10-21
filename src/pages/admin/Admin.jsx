@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEvento } from "@/lib/eventoContext";
 import EventoSettings from "@/components/admin/EventoSettings";
@@ -177,6 +177,20 @@ export default function Admin() {
   const [sidebar, setSidebar] = useState(false);
   const [switcher, setSwitcher] = useState(false);
   const navigate = useNavigate();
+  const switcherRef = useRef(null);
+
+  // El selector de evento se cierra al hacer clic afuera o con Escape
+  useEffect(() => {
+    if (!switcher) return;
+    const onClick = (e) => { if (!switcherRef.current?.contains(e.target)) setSwitcher(false); };
+    const onKey = (e) => { if (e.key === "Escape") setSwitcher(false); };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [switcher]);
 
   // El tema del panel vive en el <body> para que los diálogos (que se montan fuera del árbol) lo hereden
   useEffect(() => {
@@ -226,7 +240,7 @@ export default function Admin() {
             <img src="/navidad/escudo.png" alt="" className="h-10 w-auto drop-shadow" />
             <span className="leading-tight">
               <span className="block font-heading text-base font-bold tracking-tight">Panel de control</span>
-              <span className="block text-xs text-white/50">Eventos Capioví</span>
+              <span className="block text-xs text-white/70">Eventos Capioví</span>
             </span>
           </Link>
           <button onClick={() => setSidebar(false)} className="rounded-lg p-1.5 hover:bg-white/10 md:hidden" aria-label="Cerrar menú"><X className="h-5 w-5" /></button>
@@ -234,25 +248,29 @@ export default function Admin() {
 
         {/* Selector de evento */}
         <div className="px-4 pb-3">
-          <div className="relative">
+          <div className="relative" ref={switcherRef}>
             <button
               onClick={() => setSwitcher((s) => !s)}
+              aria-expanded={switcher}
+              aria-haspopup="listbox"
               className="flex w-full items-center justify-between gap-2 rounded-xl bg-white/[0.07] px-3 py-2.5 text-left ring-1 ring-white/10 transition hover:bg-white/10"
             >
               <span className="flex min-w-0 items-center gap-2.5">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: evento?.color_primario || "#4ade80" }} />
                 <span className="min-w-0">
-                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-white/50">Evento</span>
+                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-white/70">Evento</span>
                   <span className="block truncate text-sm font-semibold">{evento?.nombre || "Seleccionar"}</span>
                 </span>
               </span>
-              <ChevronsUpDown className="h-4 w-4 shrink-0 text-white/50" />
+              <ChevronsUpDown className="h-4 w-4 shrink-0 text-white/70" />
             </button>
             {switcher && (
-              <div className="absolute inset-x-0 z-50 mt-2 max-h-64 overflow-auto rounded-xl bg-white py-1 text-foreground shadow-2xl ring-1 ring-black/10">
+              <div role="listbox" aria-label="Eventos" className="absolute inset-x-0 z-50 mt-2 max-h-64 overflow-auto rounded-xl bg-white py-1 text-foreground shadow-2xl ring-1 ring-black/10">
                 {eventos.map((e) => (
                   <button
                     key={e.id}
+                    role="option"
+                    aria-selected={e.id === evento?.id}
                     onClick={() => { seleccionarEvento(e.id); setSwitcher(false); }}
                     className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm hover:bg-secondary"
                   >
@@ -269,7 +287,7 @@ export default function Admin() {
         <nav className="flex-1 space-y-5 overflow-y-auto px-4 pb-4 pt-2">
           {grupos.map((g) => (
             <div key={g}>
-              <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">{g}</p>
+              <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">{g}</p>
               <div className="space-y-0.5">
                 {SECCIONES.filter((s) => s.grupo === g).map((s) => (
                   <button
@@ -277,7 +295,7 @@ export default function Admin() {
                     onClick={() => ir(s.id)}
                     className={cn(
                       "relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition",
-                      seccion === s.id ? "bg-white/[0.12] text-white" : "text-white/65 hover:bg-white/[0.06] hover:text-white"
+                      seccion === s.id ? "bg-white/[0.12] text-white" : "text-white/75 hover:bg-white/[0.06] hover:text-white"
                     )}
                   >
                     {seccion === s.id && <span className="absolute -left-4 bottom-2 top-2 w-1 rounded-r-full bg-emerald-400" />}
@@ -295,7 +313,7 @@ export default function Admin() {
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-300">{inicial}</span>
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-sm font-semibold">{user?.full_name || "Administrador"}</span>
-              <span className="block truncate text-xs text-white/50">{user?.email}</span>
+              <span className="block truncate text-xs text-white/70">{user?.email}</span>
             </span>
           </div>
           <div className="grid grid-cols-2 gap-2">

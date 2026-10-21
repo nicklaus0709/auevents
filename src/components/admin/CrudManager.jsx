@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Upload, X, Inbox } from "lucide-react";
 import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { toast } from "@/components/ui/use-toast";
 
 export default function CrudManager({
@@ -29,6 +30,7 @@ export default function CrudManager({
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [subiendo, setSubiendo] = useState(null);
+  const [aEliminar, setAEliminar] = useState(null);
 
   const blank = () => {
     const b = {};
@@ -93,8 +95,10 @@ export default function CrudManager({
     }
   };
 
-  const remove = async (rec) => {
-    if (!confirm("¿Eliminar este registro?")) return;
+  const remove = async () => {
+    const rec = aEliminar;
+    setAEliminar(null);
+    if (!rec) return;
     try {
       await base44.entities[entityName].delete(rec.id);
       toast({ title: "Eliminado" });
@@ -102,6 +106,12 @@ export default function CrudManager({
     } catch (err) {
       toast({ title: "Error al eliminar", variant: "destructive" });
     }
+  };
+
+  // Nombre del registro para los textos de accesibilidad y de confirmación
+  const rotulo = (rec) => {
+    const k = ["nombre", "titulo", "comercio_nombre"].find((key) => rec[key]);
+    return k ? String(rec[k]) : "registro";
   };
 
   const renderField = (f) => {
@@ -187,8 +197,11 @@ export default function CrudManager({
                       </td>
                     ))}
                     <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <button onClick={() => openEdit(rec)} aria-label="Editar" className="rounded-lg p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => remove(rec)} aria-label="Eliminar" className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                      <div className="inline-flex items-center gap-1">
+                        <button onClick={() => openEdit(rec)} aria-label={`Editar ${rotulo(rec)}`} className="rounded-lg p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                        <span className="h-5 w-px bg-border" aria-hidden="true" />
+                        <button onClick={() => setAEliminar(rec)} aria-label={`Eliminar ${rotulo(rec)}`} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -217,6 +230,14 @@ export default function CrudManager({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!aEliminar}
+        onOpenChange={(o) => { if (!o) setAEliminar(null); }}
+        title="¿Eliminar este registro?"
+        description={aEliminar ? `Se elimina “${rotulo(aEliminar)}”. Esta acción no se puede deshacer.` : undefined}
+        onConfirm={remove}
+      />
     </div>
   );
 }

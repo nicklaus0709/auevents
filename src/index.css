@@ -109,7 +109,7 @@ body.admin-site {
 }
 
 /* ---- Kit de estilo del sitio público (se activa con .public-site) ---- */
-.public-site { --brand: 193 18 31; --brand2: 21 128 61; }
+.public-site { --brand: 193 18 31; --brand2: 21 128 61; --on-brand: 255 255 255; }
 
 @layer base {
   html { scroll-behavior: smooth; }
@@ -119,7 +119,7 @@ body.admin-site {
 }
 
 @layer components {
-  .public-site .btn { @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/25 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0; }
+  .public-site .btn { @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-onbrand shadow-md shadow-brand/25 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0; }
   .public-site .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-700 transition hover:bg-stone-100; }
   .public-site .btn-light { @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-stone-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-stone-100; }
   .public-site .btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/60 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/15; }

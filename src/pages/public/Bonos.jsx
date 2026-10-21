@@ -82,11 +82,13 @@ export default function Bonos() {
         ) : (
           <form onSubmit={handleSubmit} className="card space-y-6 !p-6 md:!p-8">
             <div>
-              <span className="label">Elegí el monto de tu colaboración</span>
-              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <span className="label" id="monto-label">Elegí el monto de tu colaboración</span>
+              <div role="radiogroup" aria-labelledby="monto-label" className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {MONTOS.map((m) => (
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={!custom && form.monto === m}
                     key={m}
                     onClick={() => { setForm({ ...form, monto: m }); setCustom(""); }}
                     className={`rounded-xl border-2 px-3 py-4 font-titulo text-lg font-bold transition ${
@@ -123,7 +125,7 @@ export default function Bonos() {
                 Total a colaborar: <strong className="text-2xl font-extrabold text-brand">{formatMoney(montoFinal || 0)}</strong>
               </p>
               <button type="submit" disabled={sending} className="btn w-full sm:w-auto">
-                {sending ? "Registrando…" : "Registrar y continuar al pago"}
+                {sending ? "Registrando…" : "Registrar mi colaboración"}
               </button>
               <p className="mt-3 text-xs text-stone-500">
                 Al registrar vas a recibir un código de seguimiento y el link de Mercado Pago para completar el pago.

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
-import { formatFechaLarga, parseHistory, partesDia } from "@/lib/formato";
+import { formatFechaLarga, parseHistory } from "@/lib/formato";
 import { txt, mostrarBonos } from "@/lib/textos";
 import Gallery from "@/components/public/Gallery";
 import Spinner from "@/components/public/Spinner";
 import AmbienteFlotante from "@/components/public/AmbienteFlotante";
+import TarjetaArtista from "@/components/public/TarjetaArtista";
 
 const paragraphs = (text) => (text || "").split(/\n\s*\n/).filter(Boolean);
 
@@ -66,7 +67,7 @@ export default function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="nieve relative isolate flex h-[78vh] max-h-[52rem] min-h-[34rem] items-end overflow-hidden bg-deep bg-festive text-white">
+      <section className="nieve relative isolate flex h-[68vh] max-h-[52rem] min-h-[30rem] items-end sm:h-[78vh] sm:min-h-[34rem] overflow-hidden bg-deep bg-festive text-white">
         {evento.hero_image && <img src={evento.hero_image} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 to-transparent" />
@@ -77,14 +78,14 @@ export default function Home() {
           <div className="animate-fade-up mt-8 flex flex-wrap gap-3">
             <Link to="/eventos" className="btn-light">{txt(evento, "cta_principal")}</Link>
             <Link to="/gastronomia" className="btn-ghost">{txt(evento, "cta_secundario")}</Link>
-            {mostrarBonos(evento) && <Link to="/bonos" className="btn !px-6 !py-3">{txt(evento, "cta_bono")}</Link>}
+            {mostrarBonos(evento) && <Link to="/bonos" className="btn-ghost">{txt(evento, "cta_bono")}</Link>}
           </div>
         </div>
       </section>
 
       {/* BARRA DE INFO */}
       <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:px-6">
-        <dl className="grid gap-px overflow-hidden rounded-2xl bg-stone-200 shadow-xl sm:grid-cols-3">
+        <dl className={`grid gap-px overflow-hidden rounded-2xl bg-stone-200 shadow-xl ${["sm:grid-cols-1", "sm:grid-cols-2", "sm:grid-cols-3"][(cuando ? 1 : 0) + (donde ? 1 : 0)]}`}>
           {cuando && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Cuándo</dt><dd className="mt-1 font-bold text-stone-900">{cuando}</dd></div>}
           {donde && <div className="bg-white p-5"><dt className="text-xs font-bold uppercase tracking-widest text-brand">Dónde</dt><dd className="mt-1 font-bold text-stone-900">{donde}</dd></div>}
           <div className="bg-white p-5">
@@ -104,30 +105,7 @@ export default function Home() {
             <Link to="/eventos" className="text-sm font-bold text-brand hover:underline">Ver toda la grilla →</Link>
           </div>
           <ul className="mt-8 grid gap-5 md:grid-cols-3">
-            {destacados.map((a) => {
-              const p = partesDia(a.fecha);
-              return (
-                <li key={a.id} className="group overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
-                  <div className="relative h-40 bg-deep">
-                    {a.imagen_url && <img src={a.imagen_url} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />}
-                    {p && (
-                      <div className="absolute left-4 top-4 rounded-xl bg-white px-3 py-2 text-center leading-none shadow-lg">
-                        <span className="block text-2xl font-extrabold text-brand">{p.day}</span>
-                        <span className="text-xs font-bold uppercase text-stone-600">{p.month}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
-                      {p && <span className="capitalize">{p.weekday}</span>}{a.hora_inicio && ` · ${a.hora_inicio} hs`}
-                    </p>
-                    <h3 className="mt-1 text-lg leading-snug">{a.nombre}</h3>
-                    {a.genero && <p className="mt-1 text-sm text-stone-500">{a.genero}</p>}
-                    {a.escenario && <p className="mt-1 text-sm text-stone-500">{a.escenario}</p>}
-                  </div>
-                </li>
-              );
-            })}
+            {destacados.map((a) => <TarjetaArtista key={a.id} a={a} />)}
           </ul>
         </section>
       )}
@@ -199,7 +177,7 @@ export default function Home() {
           <h2 className="mt-2 max-w-xl text-3xl !text-white sm:text-4xl">{txt(evento, "bonos_cta_titulo")}</h2>
           <p className="mt-3 max-w-xl text-white/90">{txt(evento, "bonos_cta_texto")}</p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link to="/bonos" className="btn-light">Ver bonos</Link>
+            <Link to="/bonos" className="btn-light">{txt(evento, "cta_bono")}</Link>
             {evento.whatsapp_url && (
               <a href={evento.whatsapp_url} target="_blank" rel="noopener noreferrer" className="btn-ghost">Escribinos por WhatsApp</a>
             )}

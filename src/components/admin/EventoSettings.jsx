@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Upload, X, Plus, Check, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import PageHeader, { Panel, Spinner } from "@/components/admin/PageHeader";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 export default function EventoSettings() {
   const { eventos, evento, seleccionarEvento, loading, recargar } = useEvento();
@@ -16,6 +17,7 @@ export default function EventoSettings() {
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [nuevo, setNuevo] = useState({ nombre: "", slug: "" });
+  const [confirmarBorrado, setConfirmarBorrado] = useState(false);
 
   React.useEffect(() => {
     if (evento) setForm({ ...evento });
@@ -85,7 +87,7 @@ export default function EventoSettings() {
 
 
   const eliminarEvento = async () => {
-    if (!confirm(`¿Eliminar el evento "${evento.nombre}"? Sus artistas, puestos, fotos y demás contenido quedan sin evento y dejan de verse. Esta acción no se puede deshacer.`)) return;
+    setConfirmarBorrado(false);
     try {
       await base44.entities.Evento.delete(evento.id);
       const items = await recargar();
@@ -232,7 +234,7 @@ export default function EventoSettings() {
         <Panel title="Zona de peligro" className="border-destructive/30">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="max-w-xl text-sm text-muted-foreground">Eliminar este evento lo saca del sitio. El contenido asociado (artistas, puestos, fotos…) deja de mostrarse.</p>
-            <Button variant="destructive" onClick={eliminarEvento}><Trash2 className="h-4 w-4" /> Eliminar evento</Button>
+            <Button variant="destructive" onClick={() => setConfirmarBorrado(true)}><Trash2 className="h-4 w-4" /> Eliminar evento</Button>
           </div>
         </Panel>
 
@@ -243,6 +245,15 @@ export default function EventoSettings() {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmarBorrado}
+        onOpenChange={setConfirmarBorrado}
+        title={`¿Eliminar el evento “${evento?.nombre}”?`}
+        description="Sus artistas, puestos, fotos y demás contenido quedan sin evento y dejan de verse. Esta acción no se puede deshacer."
+        confirmLabel="Eliminar evento"
+        onConfirm={eliminarEvento}
+      />
     </div>
   );
 }

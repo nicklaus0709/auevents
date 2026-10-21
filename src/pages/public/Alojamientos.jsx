@@ -6,6 +6,8 @@ import { txt } from "@/lib/textos";
 import { linkMapa, ordenarAlojamientos } from "@/lib/alojamientos";
 import PageHero from "@/components/public/PageHero";
 import Spinner from "@/components/public/Spinner";
+import Tarjeta from "@/components/public/Tarjeta";
+import Vacio from "@/components/public/Vacio";
 
 export default function Alojamientos() {
   const { evento, loading } = useEvento();
@@ -34,11 +36,11 @@ export default function Alojamientos() {
       <PageHero eyebrow={evento?.nombre} title={txt(evento, "alojamientos_titulo")} subtitle={txt(evento, "alojamientos_subtitulo")} image={evento?.hero_image} />
       <section className="section">
         {items.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-stone-300 py-16 text-center text-stone-500">Pronto vas a ver acá los alojamientos recomendados.</p>
+          <Vacio>Pronto vas a ver acá los alojamientos recomendados.</Vacio>
         ) : (
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((a) => (
-              <li key={a.id} className="group flex flex-col overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
+              <Tarjeta key={a.id} className="flex flex-col">
                 <div className="relative h-40 bg-deep">
                   {a.imagen_url ? (
                     <img src={a.imagen_url} alt={a.nombre} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
@@ -62,7 +64,7 @@ export default function Alojamientos() {
                     <Navigation className="h-4 w-4" /> Ver en Google Maps
                   </a>
                 </div>
-              </li>
+              </Tarjeta>
             ))}
           </ul>
         )}

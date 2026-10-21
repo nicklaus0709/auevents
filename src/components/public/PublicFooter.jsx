@@ -14,7 +14,7 @@ export default function PublicFooter() {
   ].filter((s) => s.url);
 
   return (
-    <footer className="bg-deep bg-festive text-white/80">
+    <footer className="bg-deep bg-festive text-white/85">
       <div className="stripe-candy" aria-hidden="true" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
@@ -62,11 +62,12 @@ export default function PublicFooter() {
               ))}
             </ul>
           )}
-          <Link to="/admin" className="mt-5 inline-block text-sm font-semibold text-white underline-offset-4 hover:underline">Acceso administradores →</Link>
         </div>
       </div>
-      <div className="space-y-4 border-t border-white/10 px-4 py-6 text-center">
-        <p className="text-xs text-white/60">© {year} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados.</p>
+      <div className="space-y-4 border-t border-white/10 px-4 pb-24 pt-6 text-center sm:pb-6">
+        <p className="text-xs text-white/75">
+          © {year} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados. · <Link to="/admin" className="underline-offset-2 hover:text-white hover:underline">Acceso administradores</Link>
+        </p>
         <PoweredBy />
       </div>
     </footer>

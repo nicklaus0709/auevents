@@ -3,12 +3,14 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useEvento } from "@/lib/eventoContext";
 import { txt, mostrarBonos } from "@/lib/textos";
+import { ambienteActivo } from "@/lib/ambiente";
 
 const links = [
   { to: "/", label: "Inicio", end: true },
-  { to: "/eventos", label: "Grilla de Eventos" },
+  { to: "/eventos", label: "Grilla" },
   { to: "/gastronomia", label: "Gastronomía" },
   { to: "/alojamientos", label: "Alojamientos" },
+  { to: "/medio-ambiente", label: "Medio ambiente", ambiente: true },
   { to: "/contacto", label: "Contacto" },
 ];
 
@@ -19,6 +21,24 @@ export default function PublicNavbar() {
   const { pathname } = useLocation();
 
   const switcherRef = useRef(null);
+  const menuRef = useRef(null);
+  const items = links.filter((l) => !l.ambiente || ambienteActivo(evento));
+
+  // Menú de eventos: al abrir el foco entra a la opción actual; flechas, Inicio y Fin navegan
+  const opciones = () => [...(menuRef.current?.querySelectorAll("[role=menuitem]") || [])];
+  const onMenuKey = (e) => {
+    const o = opciones();
+    const i = o.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); o[(i + 1) % o.length]?.focus(); }
+    if (e.key === "ArrowUp") { e.preventDefault(); o[(i - 1 + o.length) % o.length]?.focus(); }
+    if (e.key === "Home") { e.preventDefault(); o[0]?.focus(); }
+    if (e.key === "End") { e.preventDefault(); o[o.length - 1]?.focus(); }
+  };
+  useEffect(() => {
+    if (!switcher) return;
+    const o = opciones();
+    (o.find((x) => x.dataset.actual === "true") || o[0])?.focus();
+  }, [switcher]);
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -26,7 +46,12 @@ export default function PublicNavbar() {
   useEffect(() => {
     if (!switcher) return;
     const onClick = (e) => { if (!switcherRef.current?.contains(e.target)) setSwitcher(false); };
-    const onKey = (e) => { if (e.key === "Escape") setSwitcher(false); };
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setSwitcher(false);
+        switcherRef.current?.querySelector("button")?.focus();
+      }
+    };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -48,13 +73,13 @@ export default function PublicNavbar() {
           )}
         </Link>
 
-        <nav className="hidden items-center gap-1 xl:flex" aria-label="Principal">
-          {links.map((l) => (
+        <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1" aria-label="Principal">
+          {items.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               end={l.end}
-              className={({ isActive }) => `rounded-full px-4 py-2 text-sm font-semibold transition ${isActive ? "bg-white/15" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+              className={({ isActive }) => `rounded-full px-3 py-2 text-sm font-semibold transition xl:px-4 ${isActive ? "bg-white/15" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
             >
               {l.label}
             </NavLink>
@@ -65,21 +90,24 @@ export default function PublicNavbar() {
               <button
                 onClick={() => setSwitcher((s) => !s)}
                 aria-expanded={switcher}
-                className="flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10"
+                aria-haspopup="menu"
+                className="flex items-center gap-1.5 rounded-full border border-white/30 px-3 py-2 xl:px-4 text-sm font-semibold text-white/90 transition hover:bg-white/10"
               >
                 Eventos <ChevronDown className="h-4 w-4" />
               </button>
               {switcher && (
-                <div className="animate-fade-in absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl bg-white py-1 text-stone-800 shadow-2xl ring-1 ring-stone-200">
+                <div ref={menuRef} role="menu" aria-label="Elegir evento" onKeyDown={onMenuKey} className="animate-fade-in absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl bg-white py-1 text-stone-800 shadow-2xl ring-1 ring-stone-200">
                   {eventos.map((e) => (
                     <button
                       key={e.id}
+                      role="menuitem"
+                      data-actual={e.id === evento?.id}
                       onClick={() => { seleccionarEvento(e.id); setSwitcher(false); }}
                       className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm hover:bg-stone-100 ${e.id === evento?.id ? "bg-stone-100 font-bold" : ""}`}
                     >
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: e.color_primario || "#b91c1c" }} />
                       {e.nombre}
-                      {e.activo && <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-stone-400">Activo</span>}
+                      {e.activo && <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-stone-600">Activo</span>}
                     </button>
                   ))}
                 </div>
@@ -91,7 +119,7 @@ export default function PublicNavbar() {
         </nav>
 
         <button
-          className="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold xl:hidden"
+          className="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen(!open)}
@@ -103,13 +131,20 @@ export default function PublicNavbar() {
       <div className="stripe-candy" aria-hidden="true" />
 
       {open && (
-        <nav id="mobile-nav" className="animate-fade-in flex flex-col gap-1 border-t border-white/10 px-4 pb-5 pt-3 xl:hidden" aria-label="Principal móvil">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} className="rounded-xl px-4 py-3 text-base font-semibold hover:bg-white/10">{l.label}</Link>
+        <nav id="mobile-nav" className="animate-fade-in flex flex-col gap-1 border-t border-white/10 px-4 pb-5 pt-3 lg:hidden" aria-label="Principal móvil">
+          {items.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              className={({ isActive }) => `rounded-xl px-4 py-3 text-base font-semibold hover:bg-white/10 ${isActive ? "bg-white/15" : ""}`}
+            >
+              {l.label}
+            </NavLink>
           ))}
           {eventos.length > 1 && (
             <div className="px-4 pt-2">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-white/60">Eventos</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-white/75">Eventos</p>
               <div className="flex flex-wrap gap-2">
                 {eventos.map((e) => (
                   <button

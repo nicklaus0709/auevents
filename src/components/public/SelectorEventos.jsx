@@ -18,7 +18,7 @@ export default function SelectorEventos({ eventos, onSeleccionar }) {
         <img src="/navidad/escudo.png" alt="Escudo de Capioví" className="h-12 w-auto drop-shadow-lg" />
         <div className="leading-tight">
           <p className="font-heading text-sm font-bold tracking-tight">Municipalidad de Capioví</p>
-          <p className="text-xs text-white/50">Misiones · Argentina</p>
+          <p className="text-xs text-white/70">Misiones · Argentina</p>
         </div>
       </header>
 
@@ -27,7 +27,7 @@ export default function SelectorEventos({ eventos, onSeleccionar }) {
         <h1 className="animate-fade-up mt-3 max-w-2xl !font-heading text-4xl font-bold leading-[1.05] tracking-tight !text-white sm:text-6xl">
           ¿Qué evento querés visitar?
         </h1>
-        <p className="animate-fade-up mt-4 max-w-xl text-lg text-white/60">
+        <p className="animate-fade-up mt-4 max-w-xl text-lg text-white/75">
           Elegí uno para ver su programación, gastronomía, bonos y más.
         </p>
 
@@ -56,7 +56,7 @@ export default function SelectorEventos({ eventos, onSeleccionar }) {
               )}
               <h2 className="!font-heading text-2xl font-bold leading-tight tracking-tight !text-white">{e.nombre}</h2>
               {e.lema && <p className="mt-1 text-sm italic text-white/70">“{e.lema}”</p>}
-              {e.periodo && <p className="mt-3 text-sm text-white/60">{e.periodo}</p>}
+              {e.periodo && <p className="mt-3 text-sm text-white/75">{e.periodo}</p>}
               <span className="mt-5 h-0.5 w-10 rounded-full transition-all duration-300 group-hover:w-24" style={{ background: e.color_primario || "#fff" }} />
             </button>
           ))}
@@ -65,7 +65,7 @@ export default function SelectorEventos({ eventos, onSeleccionar }) {
 
       <footer className="border-t border-white/10 px-4 py-6 text-center">
         <div className="space-y-4">
-          <p className="text-xs text-white/60">© {new Date().getFullYear()} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados.</p>
+          <p className="text-xs text-white/75">© {new Date().getFullYear()} AuEvents - Plataforma Digital para Eventos. Todos los derechos reservados.</p>
           <PoweredBy />
         </div>
       </footer>

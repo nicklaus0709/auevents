@@ -9,7 +9,7 @@ export const TEXTOS = [
       { key: "hero_eyebrow", label: "Línea sobre el título", def: "Capioví · Misiones · Argentina" },
       { key: "cta_principal", label: "Botón principal", def: "Ver grilla de eventos" },
       { key: "cta_secundario", label: "Botón secundario", def: "Gastronomía" },
-      { key: "cta_bono", label: "Botón de bonos (también en el menú)", def: "Comprar bono" },
+      { key: "cta_bono", label: "Botón de bonos (también en el menú)", def: "Colaborar con un bono" },
       { key: "agenda_titulo", label: "Título de próximas actividades", def: "Próximas actividades" },
       { key: "nosotros_titulo", label: "Título de “Nosotros”", def: "Una celebración de toda la comunidad" },
       { key: "historia_titulo", label: "Título de “Historia”", def: "Cómo llegamos hasta acá" },

@@ -44,6 +44,7 @@ module.exports = {
   			// Kit de estilo del sitio público: colores por evento (variables CSS "r g b")
   			brand: 'rgb(var(--brand) / <alpha-value>)',
   			brand2: 'rgb(var(--brand2) / <alpha-value>)',
+  			onbrand: 'rgb(var(--on-brand) / <alpha-value>)',
   			cream: '#faf7f2',
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
@@ -71,7 +72,7 @@ module.exports = {
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
   			mono: ['var(--font-mono)'],
-  			titulo: ['Georgia', 'Cambria', 'Times New Roman', 'serif']
+  			titulo: ['var(--font-heading)']
   		},
   		keyframes: {
   			flotar: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Bot, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useEvento } from "@/lib/eventoContext";
 import { formatDia } from "@/lib/formato";
@@ -38,6 +39,22 @@ export default function ChatWidget() {
   const [data, setData] = useState({ artistas: [], puestos: [], productos: [], alojamientos: [] });
   const [msgs, setMsgs] = useState(() => [{ role: "bot", text: txt(evento, "chat_saludo") }]);
   const end = useRef(null);
+  const inputRef = useRef(null);
+  const botonRef = useRef(null);
+
+  // Al abrir, el foco entra al campo de mensaje; Escape cierra y devuelve el foco al botón
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        botonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   // Los datos se cargan recién cuando se abre el chat por primera vez
   useEffect(() => {
@@ -73,26 +90,29 @@ export default function ChatWidget() {
   return (
     <>
       <button
+        ref={botonRef}
         onClick={() => setOpen(!open)}
-        aria-label="Abrir chat de ayuda"
-        className="no-print fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-2xl text-white shadow-xl transition hover:scale-110"
+        aria-label={open ? "Cerrar chat de ayuda" : "Abrir chat de ayuda"}
+        aria-expanded={open}
+        aria-controls="chat-asistente"
+        className="no-print fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-onbrand shadow-xl transition hover:scale-110"
       >
-        {open ? "✕" : "🤖"}
+        {open ? <X className="h-6 w-6" aria-hidden="true" /> : <Bot className="h-6 w-6" aria-hidden="true" />}
       </button>
       {open && (
-        <div className="no-print fixed inset-x-3 bottom-20 z-40 flex h-[28rem] max-h-[70vh] flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl sm:inset-x-auto sm:right-4 sm:w-96" role="dialog" aria-label="Asistente del evento">
-          <div className="bg-brand px-4 py-3 text-sm font-bold text-white">Asistente del evento</div>
+        <div id="chat-asistente" className="no-print fixed inset-x-3 bottom-20 z-40 flex h-[28rem] max-h-[70vh] flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl sm:inset-x-auto sm:right-4 sm:w-96" role="dialog" aria-label="Asistente del evento">
+          <div className="bg-brand px-4 py-3 text-sm font-bold text-onbrand">Asistente del evento</div>
           <div className="flex-1 space-y-2 overflow-y-auto p-3 text-sm" aria-live="polite">
             {msgs.map((m, i) => (
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex"}>
-                <p className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 ${m.role === "user" ? "bg-brand text-white" : "bg-stone-100"}`}>{m.text}</p>
+                <p className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 ${m.role === "user" ? "bg-brand text-onbrand" : "bg-stone-100"}`}>{m.text}</p>
               </div>
             ))}
             <div ref={end} />
           </div>
           <form onSubmit={send} className="flex gap-2 border-t border-stone-200 p-2">
-            <input value={input} onChange={(e) => setInput(e.target.value)} maxLength={300} placeholder="Escribí tu consulta…" className="input" aria-label="Mensaje" />
-            <button className="btn">Enviar</button>
+            <input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} maxLength={300} placeholder="Escribí tu consulta…" className="input" aria-label="Mensaje" />
+            <button type="submit" className="btn">Enviar</button>
           </form>
         </div>
       )}

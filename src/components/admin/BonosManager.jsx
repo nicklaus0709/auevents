@@ -4,6 +4,7 @@ import { useEvento } from "@/lib/eventoContext";
 import { toast } from "@/components/ui/use-toast";
 import { Trash2, Inbox } from "lucide-react";
 import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 const ESTADOS = [
   { value: "pendiente", label: "Pendiente", color: "bg-amber-100 text-amber-700" },
@@ -17,6 +18,7 @@ export default function BonosManager() {
   const [bonos, setBonos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, monto: 0 });
+  const [aEliminar, setAEliminar] = useState(null);
 
   const load = async () => {
     if (!evento) return;
@@ -45,8 +47,10 @@ export default function BonosManager() {
     }
   };
 
-  const eliminar = async (b) => {
-    if (!confirm("¿Eliminar esta solicitud de bono?")) return;
+  const eliminar = async () => {
+    const b = aEliminar;
+    setAEliminar(null);
+    if (!b) return;
     try {
       await base44.entities.SolicitudBono.delete(b.id);
       setBonos((bs) => bs.filter((x) => x.id !== b.id));
@@ -112,7 +116,7 @@ export default function BonosManager() {
                         {ESTADOS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-right"><button onClick={() => eliminar(b)} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button></td>
+                    <td className="px-4 py-3 text-right"><button onClick={() => setAEliminar(b)} aria-label={`Eliminar solicitud ${b.codigo || ""}`} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button></td>
                   </tr>
                 ))}
               </tbody>
@@ -120,6 +124,14 @@ export default function BonosManager() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!aEliminar}
+        onOpenChange={(o) => { if (!o) setAEliminar(null); }}
+        title="¿Eliminar esta solicitud de bono?"
+        description={aEliminar ? `Se elimina la solicitud de ${aEliminar.nombre || "este contacto"}. Esta acción no se puede deshacer.` : undefined}
+        onConfirm={eliminar}
+      />
     </div>
   );
 }

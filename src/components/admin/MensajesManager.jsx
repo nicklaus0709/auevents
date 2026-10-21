@@ -4,6 +4,7 @@ import { useEvento } from "@/lib/eventoContext";
 import { toast } from "@/components/ui/use-toast";
 import { Mail, Phone, Trash2, Inbox } from "lucide-react";
 import PageHeader, { Spinner, EmptyState } from "@/components/admin/PageHeader";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 const ESTADOS = [
   { value: "nuevo", label: "Nuevo", color: "bg-blue-100 text-blue-700" },
@@ -17,6 +18,7 @@ export default function MensajesManager() {
   const { evento } = useEvento();
   const [mensajes, setMensajes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [aEliminar, setAEliminar] = useState(null);
 
   const load = async () => {
     if (!evento) return;
@@ -42,8 +44,10 @@ export default function MensajesManager() {
     }
   };
 
-  const eliminar = async (m) => {
-    if (!confirm("¿Eliminar este mensaje?")) return;
+  const eliminar = async () => {
+    const m = aEliminar;
+    setAEliminar(null);
+    if (!m) return;
     try {
       await base44.entities.MensajeContacto.delete(m.id);
       setMensajes((ms) => ms.filter((x) => x.id !== m.id));
@@ -88,13 +92,21 @@ export default function MensajesManager() {
                   >
                     {ESTADOS.map((e) => <option key={e.value} value={e.value}>{e.label}</option>)}
                   </select>
-                  <button onClick={() => eliminar(m)} className="rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => setAEliminar(m)} aria-label={`Eliminar mensaje de ${m.nombre}`} className="mt-1 rounded-lg p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!aEliminar}
+        onOpenChange={(o) => { if (!o) setAEliminar(null); }}
+        title="¿Eliminar este mensaje?"
+        description={aEliminar ? `Se elimina el mensaje de ${aEliminar.nombre}. Esta acción no se puede deshacer.` : undefined}
+        onConfirm={eliminar}
+      />
     </div>
   );
 }

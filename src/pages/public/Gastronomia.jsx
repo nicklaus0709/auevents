@@ -6,6 +6,8 @@ import { formatMoney } from "@/lib/formato";
 import PageHero from "@/components/public/PageHero";
 import { txt } from "@/lib/textos";
 import Spinner from "@/components/public/Spinner";
+import Tarjeta from "@/components/public/Tarjeta";
+import Vacio from "@/components/public/Vacio";
 
 export default function Gastronomia() {
   const { evento, loading } = useEvento();
@@ -44,21 +46,21 @@ export default function Gastronomia() {
       <PageHero eyebrow={evento?.nombre} title={txt(evento, "gastronomia_titulo")} subtitle={txt(evento, "gastronomia_subtitulo")} image={evento?.hero_image} />
       <section className="section">
         {puestos.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-stone-300 py-16 text-center text-stone-500">Pronto vas a ver acá los puestos gastronómicos.</p>
+          <Vacio>Pronto vas a ver acá los puestos gastronómicos.</Vacio>
         ) : (
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {puestos.map((p) => {
               const prods = productos[p.id] || [];
               return (
-                <li key={p.id} className="flex flex-col overflow-hidden rounded-2xl border-t-4 border-brand bg-white shadow-sm ring-1 ring-stone-200 transition even:border-brand2 hover:-translate-y-1 hover:shadow-xl">
+                <Tarjeta key={p.id} className="flex flex-col">
                   {p.imagen_url && <img src={p.imagen_url} alt={p.nombre} loading="lazy" className="h-40 w-full object-cover" />}
                   <div className="flex items-center gap-4 border-b border-stone-100 p-5">
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand text-2xl font-extrabold text-white shadow-md shadow-brand/30" aria-label={`Puesto ${p.numero ?? ""}`}>
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand text-2xl font-extrabold text-onbrand shadow-md shadow-brand/30" aria-label={`Puesto ${p.numero ?? ""}`}>
                       {p.numero ?? "—"}
                     </span>
                     <div className="min-w-0">
                       <h2 className="text-lg leading-tight">{p.nombre}</h2>
-                      {p.responsable && <p className="text-sm text-stone-500">{p.responsable}</p>}
+                      {p.responsable && <p className="text-sm text-stone-600">{p.responsable}</p>}
                     </div>
                   </div>
                   {p.descripcion && <p className="px-5 pt-4 text-sm leading-relaxed text-stone-600">{p.descripcion}</p>}
@@ -79,7 +81,7 @@ export default function Gastronomia() {
                       <MessageCircle className="h-4 w-4" /> Contactar puesto
                     </a>
                   )}
-                </li>
+                </Tarjeta>
               );
             })}
           </ul>
